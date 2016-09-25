@@ -1,0 +1,58 @@
+* Data
+** Qualitative or categorical data 
+- Party voted at last European parliament election
+- Region
+- Young/old population from mean age
+** Quantitative continuous data
+- % leave vote
+- % main language is not English
+- % no qualification
+- % with university degree
+** Merging
+#+BEGIN_SRC R :session :results silent
+  age <- read.csv("data/age.csv")
+  brexit <- read.csv("data/result.csv")
+  qualification <-  read.csv("data/qualification.csv")
+  parliament <- read.csv("data/parliament.csv")
+  english <- read.csv("data/english.csv")
+#+End_SRC
+
+#+BEGIN_SRC R:session
+
+#+END_SRC
+
+
+* Introduction
+** Describe briefly the topic of the Project and the motivations (which kind of information or evidences would you like to find out). 
+** Describe briefly the data set: source and what are the data about. 
+** Define what is your target population and what is your sample (in the case that they are different). Give the total sample size.
+
+
+* Description of variables and recoding
+** Describe each of the variables that you will analyze in this project. What are they and how are they measured. 
+** Mention the type of each variable, saying if it is qualitative or quantitative, and depending on the case, nominal/ordinal or discrete/continuous. 
+** For variables with too many categories, try to reduce the number of categories by merging categories with similar meaning and recoding them. With fewer categories, interpretation is easier.
+
+* Univariate description
+** Qualitative variables: Frequency tables, Barplots or Piechars. 
+** Quantitative variables: Frequency tables (intervals if continuous). Location measures (mean, median, quartiles), dispersion measures (variance, std. dev., CV, range, IQR), shape measures (asymmetry coefficients), Histogram or Boxplot.
+* Bivariate description
+** Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups. 
+** One qualitative, one quantitative: Compare the means, variances and CVs of the quantitative variable for each category of the other one. Compare histograms or boxplots of the quantitative variable for each category of the other one. 
+** Both quantitative: scatterplot, covariance, Pearson correlation coef., regression line of a target variable in terms of one/several explanatory variables.
+* Inference
+** Confidence interval for a difference of two proportion. 
+** Confidence interval for a difference of two means. 
+** Hypothesis testing for the equality of two proportions. 
+** Hypothesis testing for equality of two means.
+* Sampling
+** Treat your data as the population of interest and take a stratified sample using as strata the categories of one of the qualitative variable and applying simple random sampling within each strata. You first need to decide the total sample size. Secondly, you need to allocate this total sample size in the strata. Comment on the common methods for sample allocation that exist in the literature. Select your preferred method (justify your decision) and obtain the sample size within each stratum.
+** With the sample drawn in 7.1, estimate unbiasedly the population mean of a quantitative variable of interest. Estimate unbiasedly the population proportion of a qualitative variable. 
+** With the sample drawn in 7.1, estimate unbiasedly the means of a quantitative variable of interest for each stratum. Estimate unbiasedly the proportion of a qualitative variable for each stratum.
+* Model selection
+** Select the best probability distribution for at least one variable of interest. You might need to take some transformation (e.g. log).
+** Estimate the parameters of the distribution by the method of moments or by maximum likelihood.
+* Conclusions
+** Select the best probability distribution for at least one variable of interest. You might need to take some transformation (e.g. log). 
+** Estimate the parameters of the distribution by the method of moments or by maximum likelihood.
+* References
