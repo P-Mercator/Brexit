@@ -37,9 +37,38 @@ library(dplyr)
 - % no qualification
 - % with university degree
 ** Merging
-#+BEGIN_SRC R :session :results silent
-  parliament <- read.csv("data/parliament.csv")
-#+End_SRC
+| Region   | Area  | EPE | English% | NoQual% | Uni% | Age.mean | Leave% |
+|----------+-------+-----+----------+---------+------+----------+--------|
+| Scotland | Angus | Con | %        | %       | %    |       35 | %      |
+
+#+BEGIN_SRC R :session
+  parliament <- read.table("data/parliament.csv",header=F,skip=16,sep=",",nrows=401)[,c(1,6,7,8,9,10,11,12)]
+  colnames(parliament) <- c("Area","Con","Lab","LD","UKIP","Green","BNP","SNP")
+  parliament$SNP <- as.integer(as.character(parliament$SNP))
+  winning.party <- function(region){
+  
+  return(names(which.max(region)))
+
+  }
+  
+  parliament$Won <- apply(parliament, 1, winning.party)%>%
+  lapply(function(x) ifelse(is.null(x), NA, x))%>%
+  unlist()
+
+  head(parliament)
+
+  #+End_SRC
+
+#+RESULTS:
+| ABERDEEN CITY       |  9824 | 12420 | 4605 | 5025 | 3723 | 375 | 15412 | SNP |
+| ABERDEENSHIRE       | 15710 |  6402 | 8876 | 7420 | 3612 | 576 | 19802 | SNP |
+| ANGUS               |  7534 |  3768 | 1486 | 3200 | 1574 | 237 | 11044 | SNP |
+| ARGYLL & BUTE       |  5191 |  3695 | 5174 | 3030 | 1912 | 195 |  7792 | SNP |
+| CLACKMANNANSHIRE    |  1624 |  3825 |  443 | 1218 |  736 | 100 |  4074 | SNP |
+| DUMFRIES & GALLOWAY | 14143 |  8909 | 1808 | 5752 | 2418 | 363 |  8634 | Con |
+
+
+
 
 #+BEGIN_SRC R :session
   age <- read.csv("data/age.csv")[-1,]%>%
