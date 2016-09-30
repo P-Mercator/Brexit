@@ -198,15 +198,20 @@ We will only use proficiency from England.
   ## matchedCensus <- match.closest(census$Area,parliament$Area)
 
   census$MatchedParliament <- matchedCensus
+  census$MatchedParliament <- as.factor(census$MatchedParliament)
+  census[census$MatchedParliament=="",]$MatchedParliament <- NA
 
   tail(census)
+  head(census)
 
   colnames(parliament)[1] <- "MatchedParliament"
-  censusParliament <- left_join(census, parliament, by = "MatchedParliament")
+  censusParliament <- left_join(parliament,census, by = "MatchedParliament")
+  censusParliament <- merge(parliament,census, by = "MatchedParliament")
+  length(censusParliament$MatchedParliament)
   tail(censusParliament)
 
 
-  # matchedBrexit <- match.closest(brexit$Area,censusParliament$Area)
+  matchedBrexit <- match.closest(brexit$Area[1:10],censusParliament$Area)
 
   brexit$MatchedArea <- matchedBrexit
   colnames(censusParliament)[1] <- "MatchedArea"
@@ -228,54 +233,6 @@ Some regions are counted together in the data from inFuse 2011.
 - City of London, Westminster
 - Cornwall, Isles of Scilly
 
-#+BEGIN_SRC R :session
-  levels(brexit$Area)[!(levels(brexit$Area)%in%levels(age$Area))]
-#+END_SRC
-
-#+RESULTS:
-| City of London    |
-| Cornwall          |
-| Gibraltar         |
-| Isles of Scilly   |
-| Northern Ireland  |
-| Vale of Glamorgan |
-
-Northern Ireland areas are counted together
-
-#+BEGIN_SRC R :session
-  levels(age$Area)[!(levels(age$Area)%in%levels(brexit$Area))]
-#+END_SRC
-
-#+RESULTS:
-|                           |
-| Antrim                    |
-| Ards                      |
-| Armagh                    |
-| Ballymena                 |
-| Ballymoney                |
-| Banbridge                 |
-| Belfast                   |
-| Carrickfergus             |
-| Castlereagh               |
-| Coleraine                 |
-| Cookstown                 |
-| Cornwall, Isles of Scilly |
-| Craigavon                 |
-| Derry                     |
-| Down                      |
-| Dungannon                 |
-| Fermanagh                 |
-| Larne                     |
-| Limavady                  |
-| Lisburn                   |
-| Magherafelt               |
-| Moyle                     |
-| Newry and Mourne          |
-| Newtownabbey              |
-| North Down                |
-| Omagh                     |
-| Strabane                  |
-| The Vale of Glamorgan     |
 
 * Univariate description
 ** Qualitative variables: Frequency tables, Barplots or Piechars. 
