@@ -156,7 +156,6 @@ We will only use proficiency from England.
   
   head(census)
 
-  census$Area[!(tolower(census$Area)%in%tolower(parliament$Area))]
 #+END_SRC
 
 #+RESULTS:
@@ -174,416 +173,56 @@ We will only use proficiency from England.
     agrep(s,v,ignore.case=T,value=T,max.distance = 0.1, useBytes = FALSE)
   }
 
-  # sapply(census$Area,FUN=closest.match,v=parliament$Area)
-  library(stringdist)
-  amatch(age$Area,parliament$Area,method="lv")
+  match.closest <- function(toFind, charList){
+
+    match <- vector('character')
+    for (string in toFind){
+      matches <- closest.match(string,charList)
+      if(length(matches) == 0){
+        match <- c(match,"")
+      }
+      else if(length(matches) > 1){
+        cat(string)
+        print("Select and press Enter: ")
+        print(matches)
+        number <- scan(n=1)
+        if (number==0) match <- c(match,"")
+        else match <- c(match,matches[number])
+        cat("\n")
+      }
+      else match <- c(match,matches[1])
+    }
+    return(match)
+  }
+  # If needing to rematch uncomment the next line, which takes around 5 mins to complete
+  ## matchedCensus <- match.closest(census$Area,parliament$Area)
+
+  census$MatchedParliament <- matchedCensus
+
+  tail(census)
+
+  colnames(parliament)[1] <- "MatchedParliament"
+  censusParliament <- left_join(census, parliament, by = "MatchedParliament")
+  tail(censusParliament)
+
+
+  # matchedBrexit <- match.closest(brexit$Area,censusParliament$Area)
+
+  brexit$MatchedArea <- matchedBrexit
+  colnames(censusParliament)[1] <- "MatchedArea"
+  allBrexit <- left_join(brexit,censusParliament,by = "MatchedArea")
+
+  write.csv(allBrexit,"data/brexit.csv")
+  head(allBrexit)
 #+END_SRC
 
 #+RESULTS:
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| 393 |
-| 394 |
-| nil |
-| 400 |
-| 390 |
-| 363 |
-| 383 |
-| 351 |
-| 352 |
-| nil |
-| 331 |
-| 338 |
-| 337 |
-| 346 |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| 272 |
-| nil |
-| nil |
-| 112 |
-| 117 |
-| 113 |
-| 125 |
-|  95 |
-| 114 |
-| 121 |
-| nil |
-| nil |
-| nil |
-| nil |
-| 164 |
-| 139 |
-| 194 |
-| 171 |
-| 179 |
-| nil |
-| 198 |
-| 166 |
-| nil |
-| 170 |
-| 182 |
-| 161 |
-| nil |
-| 397 |
-| 357 |
-| 358 |
-| 267 |
-| 131 |
-| nil |
-| 213 |
-| 137 |
-| 144 |
-| 180 |
-| 200 |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| 349 |
-| 350 |
-| 356 |
-| 360 |
-| 361 |
-| 377 |
-| 284 |
-| 288 |
-| 292 |
-| nil |
-| 299 |
-| 302 |
-| 310 |
-| nil |
-| 101 |
-| 103 |
-| 109 |
-| 110 |
-| 118 |
-| 123 |
-| 126 |
-| 127 |
-|  98 |
-| 102 |
-| 111 |
-| nil |
-| 128 |
-| nil |
-| 149 |
-| 158 |
-| 162 |
-| 173 |
-| 193 |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-|  73 |
-| nil |
-| nil |
-| nil |
-| nil |
-|  97 |
-| 100 |
-| 104 |
-| 106 |
-| 120 |
-| 124 |
-| 138 |
-| 148 |
-| 150 |
-| 153 |
-| 154 |
-| 157 |
-| 159 |
-| 168 |
-| 176 |
-| 187 |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| 136 |
-| 141 |
-| 146 |
-| 147 |
-| 155 |
-| 163 |
-| 177 |
-| 178 |
-| 185 |
-| 188 |
-| 189 |
-| 190 |
-| 354 |
-| 359 |
-| 362 |
-| 364 |
-| 366 |
-| 370 |
-| 371 |
-| 372 |
-| 374 |
-| 378 |
-| 384 |
-| 387 |
-| 287 |
-| 291 |
-| 301 |
-| nil |
-|  82 |
-| 312 |
-| nil |
-| 289 |
-| nil |
-| 306 |
-| nil |
-| 319 |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| 293 |
-| 294 |
-| nil |
-| 304 |
-| nil |
-| nil |
-| nil |
-| 329 |
-| 332 |
-| 333 |
-| 339 |
-| 341 |
-| 342 |
-| 343 |
-| 285 |
-| 286 |
-| 290 |
-| 300 |
-| 307 |
-| nil |
-| nil |
-| 142 |
-| 169 |
-| 181 |
-| nil |
-| 195 |
-| 108 |
-| 116 |
-| 119 |
-| 122 |
-| 129 |
-| 254 |
-| 257 |
-| 259 |
-| 261 |
-| 269 |
-| 270 |
-| 271 |
-| 274 |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| 151 |
-| nil |
-| 156 |
-| 167 |
-| 172 |
-| 175 |
-| 183 |
-| 184 |
-| 186 |
-| 192 |
-| nil |
-| 262 |
-| nil |
-| 265 |
-| nil |
-| 277 |
-| 134 |
-| 135 |
-| 143 |
-| 145 |
-| 160 |
-| 165 |
-| 199 |
-| 253 |
-| 260 |
-| 264 |
-| 279 |
-| 280 |
-| 281 |
-| 353 |
-| 355 |
-| 368 |
-| 369 |
-| 373 |
-| 375 |
-| 380 |
-| 381 |
-| 382 |
-| 385 |
-| 365 |
-| 367 |
-| 379 |
-| 376 |
-| 386 |
-| 326 |
-| 330 |
-| 340 |
-| 344 |
-| 392 |
-| 395 |
-| 396 |
-| 399 |
-| 401 |
-| 252 |
-| 255 |
-| 256 |
-| 266 |
-| 268 |
-| 276 |
-| 278 |
-| 327 |
-| 328 |
-| 335 |
-| 336 |
-| 345 |
-|  59 |
-|  60 |
-|  61 |
-|  62 |
-|  63 |
-|  64 |
-|  66 |
-|  67 |
-|  68 |
-|  69 |
-|  70 |
-|  71 |
-|  72 |
-|  73 |
-|  74 |
-|  75 |
-|  76 |
-|  77 |
-|  78 |
-|  79 |
-|  80 |
-|  81 |
-|  82 |
-|  83 |
-|  84 |
-|  85 |
-|  86 |
-|  87 |
-|  88 |
-|  89 |
-|  90 |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-| nil |
-|  44 |
-|  41 |
-|  42 |
-|  43 |
-|  56 |
-|  40 |
-|  50 |
-|  39 |
-|  53 |
-| nil |
-|  36 |
-| nil |
-|  38 |
-|  52 |
-|  37 |
-|  35 |
-|  54 |
-|  47 |
-|  49 |
-|  51 |
-|  46 |
+| Blaenau Gwent  | 40.46065 | 41 | 36 | 15 | 99 | Blaenau Gwent  |   883 |  6621 |  191 |  4300 |  331 | 298 | nil | Lab  |
+| Torfaen        | 40.44772 | 41 | 29 | 20 | 99 | Torfaen        |  2799 |  7183 |  514 |  6569 |  711 | 282 | nil | Lab  |
+| Monmouthshire  |   43.007 | 45 | 21 | 33 | 99 | Monmouthshire  |  7969 |  4746 | 1036 |  6757 | 1490 | 167 | nil | Con  |
+| Newport        |  38.7871 | 38 | 27 | 23 | 95 | Newport        |  5804 | 10648 | 1061 | 10376 | 1221 | 352 | nil | Lab  |
+| Powys          | 43.93772 | 46 | 25 | 26 | 98 | Powys          | 10158 |  5221 | 4865 | 10412 | 2389 | 297 | nil | UKIP |
+| Merthyr Tydfil | 39.70132 | 40 | 34 | 18 | 97 | Merthyr Tydfil |   833 |  4631 |  243 |  3995 |  310 | 175 | nil | Lab  |
 
 Some regions are counted together in the data from inFuse 2011.
 - City of London, Westminster
