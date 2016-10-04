@@ -1,0 +1,99 @@
+#+LATEX_HEADER: \usepackage[margin=0.5in]{geometry}
+#+TITLE: Data summary
+#+AUTHOR: Pierre Mercatoris
+* Introduction
+
+The data was merged using three different kind and source of data. For each local authority in the UK, data about the Brexit vote, the European Parliament Election of 2014 and Census data from 2011. 
+A sample of the merged data can be seen in table [[tbl:dataHead]].
+
+The data was wrangled using R. from which the code can be found in the provided [[file:cleanup.r][cleanup.r]] file. The raw data can be found in the [[file:raw][raw]] folder. The final data that will be used for analysis in stored in [[file:DataBrexit.csv][DataBrexit.csv]]
+
+#+CAPTION: Sample of merged Brexit, Census and EPE data
+#+LABEL: tbl:dataHead
+#+ATTR_LATEX: :environment longtable
+| Region | Area            | Pct_Leave | Mean.Age | NoQualification | UniQualification | Fluent | Won.Parliament |
+|        | <15>            |           |          |       <10> |       <10> |        | <10>       |
+|--------+-----------------+-----------+----------+------------+------------+--------+------------|
+| East   | Peterborough    |     60.89 | 36.91632 |         25 |         20 |     84 | UKIP       |
+| East   | Luton           |     56.55 | 34.75405 |         24 |         22 |     79 | Lab        |
+| East   | Southend-on-Sea |     58.08 | 40.18441 |         25 |         22 |     95 | UKIP       |
+| East   | Thurrock        |     72.28 | 36.83433 |         26 |         17 |     94 | UKIP       |
+| East   | Bedford         |     51.78 | 38.91516 |         20 |         28 |     89 | UKIP       |
+| East   | Central Bedfordshire |     56.13 | 39.64802 |         19 |         27 |     97 | UKIP       |
+| East   | Cambridge       |     26.15 | 35.56456 |         12 |         47 |     83 | Lab        |
+| East   | East Cambridgeshire |     50.92 | 40.19086 |         21 |         29 |     96 | NA         |
+| East   | Fenland         |     71.39 | 42.06939 |         31 |         15 |     94 | UKIP       |
+|--------+-----------------+-----------+----------+------------+------------+--------+------------|
+
+* Brexit
+
+Brexit results were downloaded from the [[http://www.electoralcommission.org.uk/find-information-by-subject/elections-and-referendums/past-elections-and-referendums/eu-referendum/electorate-and-count-information][electoral commission]] website.
+
+** Pct_Leave
+
+The percentage of the local authority that voted to leave the European Union
+
+** Region
+
+Main regions of England. Scotland, Wales and Northern Ireland are each considered as a region.
+
+** Area
+
+Main local authorities of the England, Wales, Northern Ireland and Scotland.
+
+* Census 2011
+
+All census data was downloaded using the [[https://www.google.es/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwiW98rHo8HPAhVF7iYKHdQ6D6wQFggeMAA&url=http://infuse.mimas.ac.uk/&usg=AFQjCNHWMyI5mw_7zPbY_aYgBOSi2rxtVQ&sig2=0COoEWc5r66kIR4P6zwjvA][InFuse]] data portal.
+
+** Mean.Age
+Mean age in years of the local authority. Age is derived from the date of birth question and is a person's age at their last birthday, at 27 March 2011. Dates of birth that imply an age over 115 are treated as invalid and the person's age is imputed. Infants less than one year old are classified as 0 years of age.
+
+** Qualification
+The highest level of qualification is derived from the question asking people to indicate all types of qualifications held. People were also asked if they held foreign qualifications and to indicate the closest equivalent. 
+
+There were 12 response options (plus 'no qualifications') covering professional and vocational qualifications, and a range of academic qualifications These are combined into five categories for the highest level of qualification, plus a category for no qualifications and one for other qualifications (which includes vocational or work-related qualifications, and for foreign qualifications where an equivalent qualification was not indicated). 
+
+- No Qualifications: No academic or professional qualifications. 
+- Level 1 qualifications: 1-4 O Levels/CSE/GCSEs (any grades), Entry Level, Foundation Diploma, NVQ level 1, Foundation GNVQ, Basic/Essential Skills. 
+- Level 2 qualifications: 5+ O Level (Passes)/CSEs (Grade 1)/GCSEs (Grades A*-C), School Certificate, 1 A Level/ 2-3 AS Levels/VCEs, Intermediate/Higher Diploma, Welsh Baccalaureate Intermediate Diploma, NVQ level 2, Intermediate GNVQ, City and Guilds Craft, BTEC First/General Diploma, RSA Diploma Apprenticeship. 
+- Level 3 qualifications: 2+ A Levels/VCEs, 4+ AS Levels, Higher School Certificate, Progression/Advanced Diploma, Welsh Baccalaureate Advanced Diploma, NVQ Level 3; Advanced GNVQ, City and Guilds Advanced Craft, ONC, OND, BTEC National, RSA Advanced Diploma. 
+- Level 4+ qualifications: Degree (for example BA, BSc), Higher Degree (for example MA, PhD, PGCE), NVQ Level 4-5, HNC, HND, RSA Higher Diploma, BTEC Higher level, Foundation degree (NI), Professional qualifications (for example teaching, nursing, accountancy). 
+- Other qualifications: Vocational/Work-related Qualifications, Foreign Qualifications (Not stated/ level unknown).
+
+*** NoQualification
+Percentage of the population holding no qualification.
+*** UniQualification
+Percentage of the population holding a university degree
+
+** Fluent
+
+Percentage of the population which considers themselves native or very good level of English.
+
+Proficiency in English language classifies people whose main language is not English (or not English or Welsh in Wales) according to their ability to speak English. A person is classified in one of the categories: can speak English very well; can speak English well; cannot speak English well; or cannot speak English.
+
+This question was handled slightly differently in the England and Wales censuses. In the English census a tick box was used in Question 18, asking "What is your main language?", giving the option of "English" or "Other". 
+
+In the Welsh census, a tick box was used in Question 18, asking "What is your main language?", giving the option of "English or Welsh" or "Other". 
+Those who ticked "other" would be asked about their ability to speak English.
+A consequence of this is that a person who reports their main language to be Welsh and completed the Welsh census, will not be asked about their ability to speak English. Whereas a person who indicates that their main language is Welsh and lives in England would be asked about "their ability to speak English.
+
+
+* European Parliament election
+
+EPE results were downloaded from [[http://www.electoralcommission.org.uk/our-work/our-research/electoral-data][electoral commission]] website
+
+** Won.Parliament
+
+The party listed is the party that counted the most votes in each local authority during the European Parliament Election of 2014.
+
+| Code  | Party                             |
+|-------+-----------------------------------|
+| Con   | Conservatives                     |
+| Lab   | Labour                            |
+| LD    | Liberal Democrat                  |
+| UKIP  | United Kingdom Independence Party |
+| Green | Green Party                       |
+| BNP   | British National Party            |
+| SNP   | Scottish National Party           |
+
+
