@@ -3,3 +3,8 @@ auto
 *.tex
 .DS_Store
 .Rhistory
+dataSubmission
+dataSubmission.*
+data.tex
+data.pdf
+auto
