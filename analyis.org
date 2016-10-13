@@ -5,116 +5,68 @@
 #+TITLE: Brexit
 #+AUTHOR: Pierre Mercatoris
 * TODO Introduction (1 page max., 0.5 pt)[0/3]
-
  - [ ] Describe briefly the topic of the Project and the motivations (which kind of information or evidences would you like to find out).
  - [ ] Describe briefly the data set: source and what are the data about.
  - [ ] define what is your target population and what is your sample (in the case that they are different). give the total sample size.
+
+  #+BEGIN_SRC R :session brexit
+  brexit <- read.csv("data/DataBrexit.csv")
+  str(brexit)
+  head(brexit)
+  #+END_SRC
+
+  #+RESULTS:
+  | East | Peterborough         | 60.89 | 36.91632 | 25 | 20 | 84 | UKIP |
+  | East | Luton                | 56.55 | 34.75405 | 24 | 22 | 79 | Lab  |
+  | East | Southend-on-Sea      | 58.08 | 40.18441 | 25 | 22 | 95 | UKIP |
+  | East | Thurrock             | 72.28 | 36.83433 | 26 | 17 | 94 | UKIP |
+  | East | Bedford              | 51.78 | 38.91516 | 20 | 28 | 89 | UKIP |
+  | East | Central Bedfordshire | 56.13 | 39.64802 | 19 | 27 | 97 | UKIP |
+ 
 * TODO Description of variables and recoding (2 page max., 0.5 pt) [0/3]
   - [ ] Describe each of the variables that you will analyze in this project. What are they and how are they measured.
   - [ ] Mention the type of each variable, saying if it is qualitative or quantitative, and depending on the case, nominal/ordinal or discrete/continuous.
   - [ ] For variables with too many categories, try to reduce the number of categories by merging categories with similar meaning and recoding them. With fewer categories, interpretation is easier.
- 4. Univariariate description (3 pages max., 2 pt)
- 4.1
- 4.2
- Qualitative variables: Frequency tables, Barplots or Piechars.
- Quantitative variables: Frequency tables (intervals if continuous).
- Location measures (mean, median, quartiles), dispersion measures
- (variance, std. dev., CV, range, IQR), shape measures (asymmetry
- coefficients), Histogram or Boxplot.
- 5. Bivariate description (5 pages max., 2 pt)
- 5.1
- 5.2
- 5.3
- Both variables qualitative: Crossclassified table, tables with
- interesting conditional distributions, grouped or stacked barplots for
- those conditionals. Compare proportions in different groups.
- One qualitative, one quantitative: Compare the means, variances and
- CVs of the quantitative variable for each category of the other one.
- Compare histograms or boxplots of the quantitative variable for each
- category of the other one.
+
+* TODO Univariariate description (3 pages max., 2 pt)[0/2]
+   - [ ] Qualitative variables: Frequency tables, Barplots or Piechars.
+   - [ ] Quantitative variables: Frequency tables (intervals if continuous). Location measures (mean, median, quartiles), dispersion measures (variance, std. dev., CV, range, IQR), shape measures (asymmetry coefficients), Histogram or Boxplot.
+
+* TODO Bivariate description (5 pages max., 2 pt)[0/2]
+   - [ ] Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups.
+   - [ ] One qualitative, one quantitative: Compare the means, variances and CVs of the quantitative variable for each category of the other one. Compare histograms or boxplots of the quantitative variable for each category of the other one.
  Both quantitative: scatterplot, covariance, Pearson correlation coef.,
  regression line of a target variable in terms of one/several
  explanatory variables.
- 6. Inference (2 pages max., 1 pt)
- 6.1
- 6.2
- 6.3
- 6.4
- Confidence
- Confidence
- Hypothesis
- Hypothesis
- interval for a difference of two proportion.
- interval for a difference of two means.
- testing for the equality of two proportions.
- testing for equality of two means.
- 7. Sampling (2 pages max., 1.5 pt)
- 7.1
- Treat your data as the population of interest and take a stratified
- sample using as strata the categories of one of the qualitative
- variable and applying simple random sampling within each strata.
- You first need to decide the total sample size. Secondly, you need to
- allocate this total sample size in the strata. Comment on the common
- methods for sample allocation that exist in the literature. Select your
- preferred method (justify your decision) and obtain the sample size
- within each stratum.
- 27.2
- 7.3
- With the sample drawn in 7.1, estimate unbiasedly the population
- mean of a quantitative variable of interest. Estimate unbiasedly the
- population proportion of a qualitative variable.
- With the sample drawn in 7.1, estimate unbiasedly the means of a
- quantitative variable of interest for each stratum. Estimate
- unbiasedly the proportion of a qualitative variable for each stratum.
- 8. Model selection (1 page max., 1 pt)
- 8.1
- 8.2
- Select the best probability distribution for at least one variable of
- interest. You might need to take some transformation (e.g. log).
- Estimate the parameters of the distribution by the method of
- moments or by maximum likelihood.
- 9. Conclusions (2 pages max., 1.5 pt)
- 9.1
- 9.2
- Summarize the most important conclusions of your analyses.
- Mention limitations and possible extensions of this project.
- 10. References (if needed)
- List of documents referred to in the text of the report.
- IMPORTANT REMARKS:
- -
- -
- -
- -
- Free statistical analysis: Additional statistical analyses selected by the
- student that do not fit in the general structure listed above might be
- included. The maximum pages for this additional material will be 3. This
- material will be evaluated with a maximum of 2 additional points only if
- it is reasonable, correct and related with this subject.
- All tables, plots and statistical procedures must be clearly described
- (what are you doing, what is it in the x and y axis, etc) and conclusions
- (interesting or useful information) must be drawn from all of them.
- Tables and figures without any comment must be removed from the
- project report. If new plots that are different from those studied in class
- are included, they must be very clearly explained.
- These projects will be carefully read and graded. The redaction of the
- report must be original (do not copy any paragraph from any source
- unless you explicitly acknowledged it by including a reference to the
- original source). English expression must be understandable and clean
- of typos or grammar errors (e.g. –s in third person singular).
- Do not include the whole list of data in the Project report.
- #+BEGIN_SRC R :session brexit
- brexit <- read.csv("data/DataBrexit.csv")
- str(brexit)
- head(brexit)
- #+END_SRC
+ 
+* TODO Inference (2 pages max., 1 pt)[0/4]
+    - [ ] Confidence interval for a difference of two proportion.
+    - [ ] Confidence interval for a difference of two means.
+    - [ ] Hypothesis testing for the equality of two proportions.
+    - [ ] Hypothesis testing for equality of two means.
 
- #+RESULTS:
- | East | Peterborough         | 60.89 | 36.91632 | 25 | 20 | 84 | UKIP |
- | East | Luton                | 56.55 | 34.75405 | 24 | 22 | 79 | Lab  |
- | East | Southend-on-Sea      | 58.08 | 40.18441 | 25 | 22 | 95 | UKIP |
- | East | Thurrock             | 72.28 | 36.83433 | 26 | 17 | 94 | UKIP |
- | East | Bedford              | 51.78 | 38.91516 | 20 | 28 | 89 | UKIP |
- | East | Central Bedfordshire | 56.13 | 39.64802 | 19 | 27 | 97 | UKIP |
+* TODO Sampling (2 pages max., 1.5 pt)[/]
+ - [ ] Treat your data as the population of interest and take a stratified sample using as strata the categories of one of the qualitative variable and applying simple random sampling within each strata. You first need to decide the total sample size. Secondly, you need to allocate this total sample size in the strata. Comment on the common methods for sample allocation that exist in the literature. Select your preferred method (justify your decision) and obtain the sample size within each stratum.
+- [ ] With the sample drawn in 7.1, estimate unbiasedly the population mean of a quantitative variable of interest. Estimate unbiasedly the population proportion of a qualitative variable. With the sample drawn in 7.1, estimate unbiasedly the means of a quantitative variable of interest for each stratum. Estimate unbiasedly the proportion of a qualitative variable for each stratum.
+
+* TODO Model selection (1 page max., 1 pt)[0/3]
+- [ ] Select the best probability distribution for at least one variable of interest. You might need to take some transformation (e.g. log).
+- [ ] Estimate the parameters of the distribution by the method of moments or by maximum likelihood.
+
+* TODO Conclusions (2 pages max., 1.5 pt)[0/2]
+- [ ] Summarize the most important conclusions of your analyses.
+- [ ] Mention limitations and possible extensions of this project.
+
+* References (if needed)
+  List of documents referred to in the text of the report.
+  
+
+
+* IMPORTANT REMARKS:
+- Free statistical analysis: Additional statistical analyses selected by the student that do not fit in the general structure listed above might be included. The maximum pages for this additional material will be 3. This material will be evaluated with a maximum of 2 additional points only if it is reasonable, correct and related with this subject.
+- All tables, plots and statistical procedures must be clearly described (what are you doing, what is it in the x and y axis, etc) and conclusions (interesting or useful information) must be drawn from all of them. Tables and figures without any comment must be removed from the project report. If new plots that are different from those studied in class are included, they must be very clearly explained.
+- These projects will be carefully read and graded. The redaction of the report must be original (do not copy any paragraph from any source unless you explicitly acknowledged it by including a reference to the original source). English expression must be understandable and clean of typos or grammar errors (e.g. –s in third person singular).
+- Do not include the whole list of data in the Project report.
 
 
 
