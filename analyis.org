@@ -1,7 +1,18 @@
 
 #+BEGIN_SRC R :session brexit
-
+library(ggplot2)
 #+END_SRC
+
+#+RESULTS:
+| ggplot2   |
+| stats     |
+| graphics  |
+| grDevices |
+| utils     |
+| datasets  |
+| methods   |
+| base      |
+
 #+TITLE: Brexit
 #+AUTHOR: Pierre Mercatoris
 * TODO Introduction (1 page max., 0.5 pt)[0/3]
@@ -23,14 +34,58 @@
   | East | Bedford              | 51.78 | 38.91516 | 20 | 28 | 89 | UKIP |
   | East | Central Bedfordshire | 56.13 | 39.64802 | 19 | 27 | 97 | UKIP |
  
-* TODO Description of variables and recoding (2 page max., 0.5 pt) [0/3]
-  - [ ] Describe each of the variables that you will analyze in this project. What are they and how are they measured.
-  - [ ] Mention the type of each variable, saying if it is qualitative or quantitative, and depending on the case, nominal/ordinal or discrete/continuous.
+* TODO Description of variables and recoding (2 page max., 0.5 pt) [2/3]
+  - [X] Describe each of the variables that you will analyze in this project. What are they and how are they measured.
+  - [X] Mention the type of each variable, saying if it is qualitative or quantitative, and depending on the case, nominal/ordinal or discrete/continuous.
   - [ ] For variables with too many categories, try to reduce the number of categories by merging categories with similar meaning and recoding them. With fewer categories, interpretation is easier.
+  
+| Variable         | What?                   | How?                                 | Type                    |
+|------------------+-------------------------+--------------------------------------+-------------------------|
+| Region           | 12 regions of UK        | Wales, Scotland and Northern Ireland | Qualitative nominal     |
+|                  |                         | are considered regions               |                         |
+| Area             | Local authorities of UK | Brexit referendum                    | Qualitative nominal     |
+| Pct_Leave        | % of vote to leave EU   | Brexit referendum                    | Quantitative continuous |
+| Mean.Age         | Mean age                | Age on 27th March 2011               | Quantitative continuous |
+|                  |                         | Census 2011                          |                         |
+| NoQualification  | % without any diploma   | Census 2011                          | Quantitative continuous |
+| UniQualification | % with uni degree       | Census 2011                          | Quantitative continuous |
+| Fluent           | % English proficient    | Census 2011                          | Quantitative continuous |
+| Won.Parliament   | Party leading EPE       | EPE 2014                             | Qualitative nominal     |
 
+#+BEGIN_SRC R :session brexit :file NoQual.png :results graphics
+  ggplot(brexit,aes(NoQualification))+
+    geom_histogram(aes(y = ..density..))+
+    geom_density()
+  mean(brexit$NoQualification, na.rm=T)
+
+#+END_SRC
+
+#+RESULTS:
+[[file:NoQual.png]]
 * TODO Univariariate description (3 pages max., 2 pt)[0/2]
    - [ ] Qualitative variables: Frequency tables, Barplots or Piechars.
    - [ ] Quantitative variables: Frequency tables (intervals if continuous). Location measures (mean, median, quartiles), dispersion measures (variance, std. dev., CV, range, IQR), shape measures (asymmetry coefficients), Histogram or Boxplot.
+** Pct_Leave
+
+
+#+BEGIN_SRC R :session brexit :file UniQual.png :results graphics
+  ggplot(brexit,aes(UniQualification))+
+    geom_histogram(aes(y = ..density..))+
+    geom_denNoQualsity()
+#+END_SRC
+
+#+RESULTS:
+[[file:UniQual.png]]
+
+
+#+BEGIN_SRC R :session brexit :file Pct_leave.png :results graphics
+  ggplot(brexit,aes(Pct_Leave))+
+    geom_histogram(aes(y = ..density..))+
+    geom_density()
+#+END_SRC
+
+#+RESULTS:
+[[file:Pct_leave.png]]
 
 * TODO Bivariate description (5 pages max., 2 pt)[0/2]
    - [ ] Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups.
