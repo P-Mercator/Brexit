@@ -1,5 +1,9 @@
+#+TITLE: Brexit
+#+AUTHOR: Pierre Mercatoris
+#+property: session brexit
+#+property: results output
 
-#+BEGIN_SRC R :session brexit
+#+BEGIN_SRC R :exports none
 library(ggplot2)
 #+END_SRC
 
@@ -13,17 +17,15 @@ library(ggplot2)
 | methods   |
 | base      |
 
-#+TITLE: Brexit
-#+AUTHOR: Pierre Mercatoris
 * TODO Introduction (1 page max., 0.5 pt)[0/3]
  - [ ] Describe briefly the topic of the Project and the motivations (which kind of information or evidences would you like to find out).
  - [ ] Describe briefly the data set: source and what are the data about.
  - [ ] define what is your target population and what is your sample (in the case that they are different). give the total sample size.
 
-  #+BEGIN_SRC R :session brexit
-  brexit <- read.csv("data/DataBrexit.csv")
-  str(brexit)
-  head(brexit)
+  #+BEGIN_SRC R :exports results :results value table 
+    brexit <- read.csv("data/DataBrexit.csv")
+    str(brexit)
+    head(brexit,head=T)
   #+END_SRC
 
   #+RESULTS:
@@ -52,40 +54,45 @@ library(ggplot2)
 | Fluent           | % English proficient    | Census 2011                          | Quantitative continuous |
 | Won.Parliament   | Party leading EPE       | EPE 2014                             | Qualitative nominal     |
 
-#+BEGIN_SRC R :session brexit :file NoQual.png :results graphics
+#+BEGIN_SRC R :exports both :results graphics :file "./pictures/noQualDis.png" 
   ggplot(brexit,aes(NoQualification))+
     geom_histogram(aes(y = ..density..))+
     geom_density()
-  mean(brexit$NoQualification, na.rm=T)
 
 #+END_SRC
 
 #+RESULTS:
-[[file:NoQual.png]]
+[[file:./pictures/noQualDis.png]]
 * TODO Univariariate description (3 pages max., 2 pt)[0/2]
    - [ ] Qualitative variables: Frequency tables, Barplots or Piechars.
    - [ ] Quantitative variables: Frequency tables (intervals if continuous). Location measures (mean, median, quartiles), dispersion measures (variance, std. dev., CV, range, IQR), shape measures (asymmetry coefficients), Histogram or Boxplot.
 ** Pct_Leave
 
 
-#+BEGIN_SRC R :session brexit :file UniQual.png :results graphics
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/uniQualDis.png"
   ggplot(brexit,aes(UniQualification))+
     geom_histogram(aes(y = ..density..))+
-    geom_denNoQualsity()
+    geom_density()
 #+END_SRC
 
+#+NAME: graphic1
+#+CAPTION: Hello
 #+RESULTS:
-[[file:UniQual.png]]
+[[file:./pictures/uniQualDis.png]]
 
+* test
+  I am going to talk about figure [[graphic1]]
 
-#+BEGIN_SRC R :session brexit :file Pct_leave.png :results graphics
+#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/leavePctDis.png"
   ggplot(brexit,aes(Pct_Leave))+
     geom_histogram(aes(y = ..density..))+
     geom_density()
 #+END_SRC
 
 #+RESULTS:
-[[file:Pct_leave.png]]
+[[file:./pictures/leaveDis.png]]
+
+
 
 * TODO Bivariate description (5 pages max., 2 pt)[0/2]
    - [ ] Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups.

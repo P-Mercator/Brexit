@@ -2,6 +2,7 @@ data
 auto
 *.pdf
 *.tex
+*.html
 .DS_Store
 .Rhistory
 dataSubmission
