@@ -2,17 +2,21 @@
 #+AUTHOR: Pierre Mercatoris
 #+property: session brexit
 #+property: results output
+#+OPTIONS: ^:nil
 
 #+BEGIN_SRC R :exports none
+  rm(list = ls)
   library(ggplot2)
+  library(pastecs)
+  library(ascii)
+  options(asciiType="org")
   brexit <- read.csv("data/DataBrexit.csv")
   options(warn=-1)
                                           # options(warn=0)
-  library(ascii)
-  options(asciiType="org")
 #+END_SRC
 
 #+RESULTS:
+: Error in rm(list = ls) : invalid first argument
 
 * TODO Introduction (1 page max., 0.5 pt)[0/3]
  - [ ] Describe briefly the topic of the Project and the motivations (which kind of information or evidences would you like to find out).
@@ -20,10 +24,11 @@
  - [ ] define what is your target population and what is your sample (in the case that they are different). give the total sample size.
 
  
-* TODO Description of variables and recoding (2 page max., 0.5 pt) [2/3]
+* DONE Description of variables and recoding (2 page max., 0.5 pt) [3/3]
+  CLOSED: [2016-10-20 Thu 18:37]
   - [X] Describe each of the variables that you will analyze in this project. What are they and how are they measured.
   - [X] Mention the type of each variable, saying if it is qualitative or quantitative, and depending on the case, nominal/ordinal or discrete/continuous.
-  - [ ] For variables with too many categories, try to reduce the number of categories by merging categories with similar meaning and recoding them. With fewer categories, interpretation is easier.
+  - [X] For variables with too many categories, try to reduce the number of categories by merging categories with similar meaning and recoding them. With fewer categories, interpretation is easier.
   
 | Variable         | What?                   | How?                                 | Type                    |
 |------------------+-------------------------+--------------------------------------+-------------------------|
@@ -38,6 +43,26 @@
 | Fluent           | % English proficient    | Census 2011                          | Quantitative continuous |
 | Won.Parliament   | Party leading EPE       | EPE 2014                             | Qualitative nominal     |
 
+** Reducing NoQualification
+
+In order to have 3 qualitative and 3 quantitative variables to analyse alongside Pct_Leave, NoQualification was categorised into 3 groups (High, Medium and Low), transforming it into a qualitative ordinal variable. This variable was chosen its distribution (fig. [[fig:noQualDis]]) is normal and can be split relatively equally around the mean (\mu) using its standard deviation (\sigma). All values $x$ where, $ x > \mu + 0.5 \sigma$ were considered as High, $\mu - 0.5 \sigma < x < \mu + 0.5 \sigma$ considered Medium and $x < \mu - 0.5 \sigma$ considered Low.  
+
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/noQualDis.svg" 
+  x <- mean(brexit$NoQualification,na.rm = T)
+  ggplot(brexit,aes(NoQualification))+
+    geom_histogram(aes(y = ..density..))+
+    geom_density()+
+    geom_vline(linetype = 2,xintercept = mean(brexit$NoQualification,na.rm = T)+0.5*sd(brexit$NoQualification,na.rm = T),color="red")+
+    geom_vline(linetype = 2, xintercept = mean(brexit$NoQualification,na.rm = T)-0.5*sd(brexit$NoQualification,na.rm = T),color="red")+
+    labs( x = "% of population holding no qualification", y = "Density")
+
+#+END_SRC
+
+#+NAME: fig:noQualDis
+#+CAPTION: Density plot and histogram of the % of the population holding no qualification. The red dotted lines show the split for the reduction to High, Medium, Low.
+#+RESULTS:
+[[file:./pictures/noQualDis.svg]]
+
 #+BEGIN_SRC R :exports none
 brexit$NoQualification <- cut(brexit$NoQualification,c(0,mean(brexit$NoQualification,na.rm = T)-0.5*sd(brexit$NoQualification,na.rm = T),mean(brexit$NoQualification,na.rm = T)+0.5*sd(brexit$NoQualification,na.rm = T),max(brexit$NoQualification,na.rm=T)),labels=c("Low","Medium","High"))
 #+END_SRC
@@ -47,6 +72,7 @@ brexit$NoQualification <- cut(brexit$NoQualification,c(0,mean(brexit$NoQualifica
 * TODO Univariariate description (3 pages max., 2 pt)[0/2]
    - [ ] Qualitative variables: Frequency tables, Barplots or Piechars.
    - [ ] Quantitative variables: Frequency tables (intervals if continuous). Location measures (mean, median, quartiles), dispersion measures (variance, std. dev., CV, range, IQR), shape measures (asymmetry coefficients), Histogram or Boxplot.
+
   #+BEGIN_SRC R :exports results :results output raw
     ascii(summary(brexit[,-2],maxsum=12))
   #+END_SRC
@@ -58,8 +84,8 @@ brexit$NoQualification <- cut(brexit$NoQualification,c(0,mean(brexit$NoQualifica
   |  2 | East Midlands           :40 | 1st Qu.:47.14 | 1st Qu.:38.79 | Medium:132      | 1st Qu.:22.00    | 1st Qu.:92.00 | Lab :100       |
   |  3 | London                  :33 | Median :54.27 | Median :40.39 | High  :114      | Median :26.00    | Median :96.00 | LD  :  4       |
   |  4 | North East              :12 | Mean   :52.99 | Mean   :40.32 | NA's  : 12      | Mean   :26.68    | Mean   :93.63 | SNP : 16       |
-  |  5 | Northern Ireland        : 1 | 3rd Qu.:60.34 | 3rd Qu.:42.19 |                 | 3rd Qu.:31.00    | 3rd Qu.:98.00 | UKIP:173       |
-  |  6 | North West              :39 | Max.   :75.56 | Max.   :47.69 |                 | Max.   :54.00    | Max.   :99.00 | NA's:  5       |
+  |  5 | North West              :39 | 3rd Qu.:60.34 | 3rd Qu.:42.19 |                 | 3rd Qu.:31.00    | 3rd Qu.:98.00 | UKIP:173       |
+  |  6 | Northern Ireland        : 1 | Max.   :75.56 | Max.   :47.69 |                 | Max.   :54.00    | Max.   :99.00 | NA's:  5       |
   |  7 | Scotland                :32 |               | NA's   :12    |                 | NA's   :12       | NA's   :12    |                |
   |  8 | South East              :67 |               |               |                 |                  |               |                |
   |  9 | South West              :38 |               |               |                 |                  |               |                |
@@ -67,68 +93,89 @@ brexit$NoQualification <- cut(brexit$NoQualification,c(0,mean(brexit$NoQualifica
   | 11 | West Midlands           :30 |               |               |                 |                  |               |                |
   | 12 | Yorkshire and The Humber:21 |               |               |                 |                  |               |                |
 
-#+BEGIN_SRC R :exports both :results graphics :file "./pictures/noQualDis.png" 
-  x <- mean(brexit$NoQualification,na.rm = T)
-  ggplot(brexit,aes(NoQualification))+
-    geom_histogram(aes(y = ..density..))+
-    geom_density()+
-    geom_vline(xintercept = mean(brexit$NoQualification,na.rm = T)+sd(brexit$NoQualification,na.rm = T),color="red")+
-    geom_vline(xintercept = mean(brexit$NoQualification,na.rm = T)-sd(brexit$NoQualification,na.rm = T),color="red")
-
+** Qualitative variables
+#+BEGIN_SRC R :exports results :results output raw 
+ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE, p = 0.95))
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/noQualDis.png]]
+|              | Pct_Leave | Mean.Age | UniQualification |
+|--------------+-----------+----------+------------------|
+| nbr.val      |    382.00 |   370.00 |           370.00 |
+| nbr.null     |      0.00 |     0.00 |             0.00 |
+| nbr.na       |      0.00 |    12.00 |            12.00 |
+| min          |      4.09 |    30.93 |            14.00 |
+| max          |     75.56 |    47.69 |            54.00 |
+| range        |     71.47 |    16.75 |            40.00 |
+| sum          |  20241.80 | 14918.74 |          9873.00 |
+| median       |     54.27 |    40.39 |            26.00 |
+| mean         |     52.99 |    40.32 |            26.68 |
+| SE.mean      |      0.55 |     0.15 |             0.38 |
+| CI.mean.0.95 |      1.08 |     0.29 |             0.74 |
+| var          |    114.42 |     8.08 |            52.93 |
+| std.dev      |     10.70 |     2.84 |             7.28 |
+| coef.var     |      0.20 |     0.07 |             0.27 |
+| skewness     |     -0.82 |    -0.33 |             0.93 |
+| skew.2SE     |     -3.30 |    -1.30 |             3.67 |
+| kurtosis     |      1.09 |     0.37 |             1.16 |
+| kurt.2SE     |      2.19 |     0.73 |             2.30 |
+| normtest.W   |      0.96 |     0.99 |             0.95 |
+| normtest.p   |      0.00 |     0.01 |             0.00 |
 
-
-#+BEGIN_SRC R :exports results :results graphics :file "./pictures/uniQualDis.png"
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/uniQualDis.svg"
   ggplot(brexit,aes(UniQualification))+
     geom_histogram(aes(y = ..density..))+
     geom_density()+
-    geom_vline(xintercept = mean(brexit$UniQualification,na.rm = T)+sd(brexit$UniQualification,na.rm = T),color="red")+
-    geom_vline(xintercept = mean(brexit$UniQualification,na.rm = T)-sd(brexit$UniQualification,na.rm = T),color="red")
-
+    labs( x = "% of population holding university qualification", y = "Density")
 #+END_SRC
 
 #+NAME: graphic1
 #+CAPTION: Hello
 #+RESULTS:
-[[file:./pictures/uniQualDis.png]]
+[[file:./pictures/uniQualDis.svg]]
 
-#+BEGIN_SRC R :exports results :results graphics :file "./pictures/ageDis.png"
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/ageDis.svg"
   ggplot(brexit,aes(Mean.Age))+
     geom_histogram(aes(y = ..density..))+
     geom_density()+
-    geom_vline(xintercept = mean(brexit$Mean.Age,na.rm = T)+sd(brexit$Mean.Age,na.rm = T),color="red")+
-    geom_vline(xintercept = mean(brexit$Mean.Age,na.rm = T)-sd(brexit$Mean.Age,na.rm = T),color="red")
-
+    labs( x = "Mean age", y = "Density")
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/ageDis.png]]
+[[file:./pictures/ageDis.svg]]
 
-#+BEGIN_SRC R :exports results :results graphics :file "./pictures/fluentDis.png"
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/fluentDis.svg"
   ggplot(brexit,aes(Fluent))+
     geom_histogram(aes(y = ..density..))+
     geom_density()+
-    geom_vline(xintercept = mean(brexit$Fluent,na.rm = T)+sd(brexit$Fluent,na.rm = T),color="red")+
-    geom_vline(xintercept = mean(brexit$Fluent,na.rm = T)-sd(brexit$Fluent,na.rm = T),color="red")
+    labs( x = "% of population fluent in English", y = "Density")
 
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/fluentDis.png]]
+[[file:./pictures/fluentDis.svg]]
 
-#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/leavePctDis.png"
+#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/leavePctDis.svg"
   ggplot(brexit,aes(Pct_Leave))+
     geom_histogram(aes(y = ..density..))+
-    geom_density()
+    geom_density()+
+    labs( x = "% that voted to leave at Brexit", y = "Density")
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/leavePctDis.png]]
+[[file:./pictures/leavePctDis.svg]]
+
+** Qualitative variables
 
 
+#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/regionPie.svg"
+  ggplot(brexit,aes(Region,fill = Region))+
+    geom_bar(width = 1)+
+    coord_polar()
+#+END_SRC
+
+#+RESULTS:
+[[file:./pictures/regionPie.svg]]
 
 * TODO Bivariate description (5 pages max., 2 pt)[0/2]
    - [ ] Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups.
