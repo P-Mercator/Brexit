@@ -5,18 +5,19 @@
 #+OPTIONS: ^:nil
 
 #+BEGIN_SRC R :exports none
-  rm(list = ls)
+  rm(list = ls())
   library(ggplot2)
   library(pastecs)
   library(ascii)
+                                          # allows to export tables to org
   options(asciiType="org")
   brexit <- read.csv("data/DataBrexit.csv")
+                                          # remove warnings from outputs
   options(warn=-1)
                                           # options(warn=0)
 #+END_SRC
 
 #+RESULTS:
-: Error in rm(list = ls) : invalid first argument
 
 * TODO Introduction (1 page max., 0.5 pt)[0/3]
  - [ ] Describe briefly the topic of the Project and the motivations (which kind of information or evidences would you like to find out).
@@ -52,6 +53,7 @@ In order to have 3 qualitative and 3 quantitative variables to analyse alongside
   ggplot(brexit,aes(NoQualification))+
     geom_histogram(aes(y = ..density..))+
     geom_density()+
+                                          # Add lines on mean +- sd
     geom_vline(linetype = 2,xintercept = mean(brexit$NoQualification,na.rm = T)+0.5*sd(brexit$NoQualification,na.rm = T),color="red")+
     geom_vline(linetype = 2, xintercept = mean(brexit$NoQualification,na.rm = T)-0.5*sd(brexit$NoQualification,na.rm = T),color="red")+
     labs( x = "% of population holding no qualification", y = "Density")
@@ -64,7 +66,9 @@ In order to have 3 qualitative and 3 quantitative variables to analyse alongside
 [[file:./pictures/noQualDis.svg]]
 
 #+BEGIN_SRC R :exports none
-brexit$NoQualification <- cut(brexit$NoQualification,c(0,mean(brexit$NoQualification,na.rm = T)-0.5*sd(brexit$NoQualification,na.rm = T),mean(brexit$NoQualification,na.rm = T)+0.5*sd(brexit$NoQualification,na.rm = T),max(brexit$NoQualification,na.rm=T)),labels=c("Low","Medium","High"))
+  # categorise the data and label it
+  brexit$NoQualification <- cut(brexit$NoQualification,c(0,mean(brexit$NoQualification,na.rm = T)-0.5*sd(brexit$NoQualification,na.rm = T),mean(brexit$NoQualification,na.rm = T)+0.5*sd(brexit$NoQualification,na.rm = T),max(brexit$NoQualification,na.rm=T)),labels=c("Low","Medium","High"))
+
 #+END_SRC
 
 #+RESULTS:
@@ -84,8 +88,8 @@ brexit$NoQualification <- cut(brexit$NoQualification,c(0,mean(brexit$NoQualifica
   |  2 | East Midlands           :40 | 1st Qu.:47.14 | 1st Qu.:38.79 | Medium:132      | 1st Qu.:22.00    | 1st Qu.:92.00 | Lab :100       |
   |  3 | London                  :33 | Median :54.27 | Median :40.39 | High  :114      | Median :26.00    | Median :96.00 | LD  :  4       |
   |  4 | North East              :12 | Mean   :52.99 | Mean   :40.32 | NA's  : 12      | Mean   :26.68    | Mean   :93.63 | SNP : 16       |
-  |  5 | North West              :39 | 3rd Qu.:60.34 | 3rd Qu.:42.19 |                 | 3rd Qu.:31.00    | 3rd Qu.:98.00 | UKIP:173       |
-  |  6 | Northern Ireland        : 1 | Max.   :75.56 | Max.   :47.69 |                 | Max.   :54.00    | Max.   :99.00 | NA's:  5       |
+  |  5 | Northern Ireland        : 1 | 3rd Qu.:60.34 | 3rd Qu.:42.19 |                 | 3rd Qu.:31.00    | 3rd Qu.:98.00 | UKIP:173       |
+  |  6 | North West              :39 | Max.   :75.56 | Max.   :47.69 |                 | Max.   :54.00    | Max.   :99.00 | NA's:  5       |
   |  7 | Scotland                :32 |               | NA's   :12    |                 | NA's   :12       | NA's   :12    |                |
   |  8 | South East              :67 |               |               |                 |                  |               |                |
   |  9 | South West              :38 |               |               |                 |                  |               |                |
@@ -171,11 +175,34 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 #+BEGIN_SRC R  :exports results :results graphics :file "./pictures/regionPie.svg"
   ggplot(brexit,aes(Region,fill = Region))+
     geom_bar(width = 1)+
-    coord_polar()
+    coord_polar()+
+    labs( x = "Region", y = "Number of localities")+
+    guides(fill=FALSE)
 #+END_SRC
 
 #+RESULTS:
 [[file:./pictures/regionPie.svg]]
+
+#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/noQualBar.svg"
+  ggplot(brexit,aes(NoQualification,fill = NoQualification))+
+    geom_bar()+
+    labs( x = "Level of unqualification", y = "Number of localities")+
+    guides(fill=FALSE)
+#+END_SRC
+
+#+RESULTS:
+[[file:./pictures/noQualBar.svg]]
+
+#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/epeBar.svg"
+  ggplot(brexit,aes(Won.Parliament,fill = Won.Parliament))+
+    geom_bar()+
+    labs( x = "Leading party during EPE of 2014", y = "Number of localities")+
+    guides(fill=FALSE)
+
+#+END_SRC
+
+#+RESULTS:
+[[file:./pictures/epeBar.svg]]
 
 * TODO Bivariate description (5 pages max., 2 pt)[0/2]
    - [ ] Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups.
