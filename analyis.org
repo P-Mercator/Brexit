@@ -28,7 +28,7 @@
 * DONE Description of variables and recoding (2 page max., 0.5 pt) [3/3]
   CLOSED: [2016-10-20 Thu 18:37]
   - [X] Describe each of the variables that you will analyze in this project. What are they and how are they measured.
-  - [X] Mention the type of each variable, saying if it is qualitative or quantitative, and depending on the case, nominal/ordinal or discrete/continuous.
+  - [X] Mention the type of each variable, saying if it is qualitative or quantitative, and daulaepending on the case, nominal/ordinal or discrete/continuous.
   - [X] For variables with too many categories, try to reduce the number of categories by merging categories with similar meaning and recoding them. With fewer categories, interpretation is easier.
   
 | Variable         | What?                   | How?                                 | Type                    |
