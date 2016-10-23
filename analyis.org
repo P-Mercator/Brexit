@@ -18,6 +18,7 @@
 #+END_SRC
 
 #+RESULTS:
+: Loading required package: boot
 
 * TODO Introduction (1 page max., 0.5 pt)[0/3]
  - [ ] Describe briefly the topic of the Project and the motivations (which kind of information or evidences would you like to find out).
@@ -88,8 +89,8 @@ In order to have 3 qualitative and 3 quantitative variables to analyse alongside
   |  2 | East Midlands           :40 | 1st Qu.:47.14 | 1st Qu.:38.79 | Medium:132      | 1st Qu.:22.00    | 1st Qu.:92.00 | Lab :100       |
   |  3 | London                  :33 | Median :54.27 | Median :40.39 | High  :114      | Median :26.00    | Median :96.00 | LD  :  4       |
   |  4 | North East              :12 | Mean   :52.99 | Mean   :40.32 | NA's  : 12      | Mean   :26.68    | Mean   :93.63 | SNP : 16       |
-  |  5 | Northern Ireland        : 1 | 3rd Qu.:60.34 | 3rd Qu.:42.19 |                 | 3rd Qu.:31.00    | 3rd Qu.:98.00 | UKIP:173       |
-  |  6 | North West              :39 | Max.   :75.56 | Max.   :47.69 |                 | Max.   :54.00    | Max.   :99.00 | NA's:  5       |
+  |  5 | North West              :39 | 3rd Qu.:60.34 | 3rd Qu.:42.19 |                 | 3rd Qu.:31.00    | 3rd Qu.:98.00 | UKIP:173       |
+  |  6 | Northern Ireland        : 1 | Max.   :75.56 | Max.   :47.69 |                 | Max.   :54.00    | Max.   :99.00 | NA's:  5       |
   |  7 | Scotland                :32 |               | NA's   :12    |                 | NA's   :12       | NA's   :12    |                |
   |  8 | South East              :67 |               |               |                 |                  |               |                |
   |  9 | South West              :38 |               |               |                 |                  |               |                |
@@ -98,6 +99,41 @@ In order to have 3 qualitative and 3 quantitative variables to analyse alongside
   | 12 | Yorkshire and The Humber:21 |               |               |                 |                  |               |                |
 
 ** Qualitative variables
+
+
+#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/regionPie.svg"
+  ggplot(brexit,aes(Region))+
+    geom_bar(width = 1)+
+    coord_polar()+
+    labs( x = "Region", y = "Number of localities")
+    # guides(fill=FALSE)
+#+END_SRC
+
+#+RESULTS:
+[[file:./pictures/regionPie.svg]]
+
+#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/noQualBar.svg"
+  ggplot(brexit,aes(NoQualification,fill = NoQualification))+
+    geom_bar()+
+    labs( x = "Level of unqualification", y = "Number of localities")+
+    guides(fill=FALSE)
+#+END_SRC
+
+#+RESULTS:
+[[file:./pictures/noQualBar.svg]]
+
+#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/epeBar.svg"
+  ggplot(na.omit(brexit),aes(Won.Parliament,fill = Won.Parliament))+
+    geom_bar()+
+    labs( x = "Leading party during EPE of 2014", y = "Number of localities")+
+    guides(fill=FALSE)
+
+#+END_SRC
+
+#+RESULTS:
+[[file:./pictures/epeBar.svg]]
+
+** Quantitative variables
 #+BEGIN_SRC R :exports results :results output raw 
 ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE, p = 0.95))
 #+END_SRC
@@ -169,41 +205,6 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 #+RESULTS:
 [[file:./pictures/leavePctDis.svg]]
 
-** Qualitative variables
-
-
-#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/regionPie.svg"
-  ggplot(brexit,aes(Region,fill = Region))+
-    geom_bar(width = 1)+
-    coord_polar()+
-    labs( x = "Region", y = "Number of localities")+
-    guides(fill=FALSE)
-#+END_SRC
-
-#+RESULTS:
-[[file:./pictures/regionPie.svg]]
-
-#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/noQualBar.svg"
-  ggplot(brexit,aes(NoQualification,fill = NoQualification))+
-    geom_bar()+
-    labs( x = "Level of unqualification", y = "Number of localities")+
-    guides(fill=FALSE)
-#+END_SRC
-
-#+RESULTS:
-[[file:./pictures/noQualBar.svg]]
-
-#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/epeBar.svg"
-  ggplot(brexit,aes(Won.Parliament,fill = Won.Parliament))+
-    geom_bar()+
-    labs( x = "Leading party during EPE of 2014", y = "Number of localities")+
-    guides(fill=FALSE)
-
-#+END_SRC
-
-#+RESULTS:
-[[file:./pictures/epeBar.svg]]
-
 * TODO Bivariate description (5 pages max., 2 pt)[0/2]
    - [ ] Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups.
    - [ ] One qualitative, one quantitative: Compare the means, variances and CVs of the quantitative variable for each category of the other one. Compare histograms or boxplots of the quantitative variable for each category of the other one.
@@ -217,9 +218,9 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
     - [ ] Hypothesis testing for the equality of two proportions.
     - [ ] Hypothesis testing for equality of two means.
 
-* TODO Sampling (2 pages max., 1.5 pt)[/]
+* TODO Sampling (2 pages max., 1.5 pt)[0/2]
  - [ ] Treat your data as the population of interest and take a stratified sample using as strata the categories of one of the qualitative variable and applying simple random sampling within each strata. You first need to decide the total sample size. Secondly, you need to allocate this total sample size in the strata. Comment on the common methods for sample allocation that exist in the literature. Select your preferred method (justify your decision) and obtain the sample size within each stratum.
-- [ ] With the sample drawn in 7.1, estimate unbiasedly the population mean of a quantitative variable of interest. Estimate unbiasedly the population proportion of a qualitative variable. With the sample drawn in 7.1, estimate unbiasedly the means of a quantitative variable of interest for each stratum. Estimate unbiasedly the proportion of a qualitative variable for each stratum.
+ - [ ] With the sample drawn in 7.1, estimate unbiasedly the population mean of a quantitative variable of interest. Estimate unbiasedly the population proportion of a qualitative variable. With the sample drawn in 7.1, estimate unbiasedly the means of a quantitative variable of interest for each stratum. Estimate unbiasedly the proportion of a qualitative variable for each stratum.
 
 * TODO Model selection (1 page max., 1 pt)[0/3]
 - [ ] Select the best probability distribution for at least one variable of interest. You might need to take some transformation (e.g. log).
