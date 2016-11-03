@@ -1,3 +1,4 @@
+#+LATEX_HEADER: \usepackage{minted}
 #+TITLE: Brexit
 #+AUTHOR: Pierre Mercatoris
 #+property: session brexit
@@ -9,6 +10,7 @@
   library(ggplot2)
   library(pastecs)
   library(ascii)
+  library(GGally)
                                           # allows to export tables to org
   options(asciiType="org")
   brexit <- read.csv("data/DataBrexit.csv")
@@ -26,7 +28,7 @@
  - [ ] define what is your target population and what is your sample (in the case that they are different). give the total sample size.
 
  
-* DONE Description of variables and recoding (2 page max., 0.5 pt) [3/3]
+* DONE DescriptiNOTE: many reconciliation services are often disrupted. Some Open Refine distributions have implemented these services,  but not all of them work as it is supposed do do. An alternative way is merging columns from different datasets with GREL. A step-by-step tutorial can be found here (previously you have to download the dataset, for instance by querying DBpedia SPARQL)on of variables and recoding (2 page max., 0.5 pt) [3/3]
   CLOSED: [2016-10-20 Thu 18:37]
   - [X] Describe each of the variables that you will analyze in this project. What are they and how are they measured.
   - [X] Mention the type of each variable, saying if it is qualitative or quantitative, and daulaepending on the case, nominal/ordinal or discrete/continuous.
@@ -206,6 +208,7 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 [[file:./pictures/leavePctDis.svg]]
 
 * TODO Bivariate description (5 pages max., 2 pt)[1/3]
+
  - [X] Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups.
  - [ ] One qualitative, one quantitative: Compare the means, variances and CVs of the quantitative variable for each category of the other one. Compare histograms or boxplots of the quantitative variable for each category of the other one.
  - [ ] Both quantitative: scatterplot, covariance, Pearson correlation coef., regression line of a target variable in terms of one/several explanatory variables.
