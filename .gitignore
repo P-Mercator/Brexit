@@ -9,3 +9,7 @@ dataSubmission
 dataSubmission.*
 auto
 pictures
+*.aux
+*.log
+*.out
+*.toc
