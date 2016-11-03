@@ -205,53 +205,11 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 #+RESULTS:
 [[file:./pictures/leavePctDis.svg]]
 
-<<<<<<< HEAD
-* TODO Bivariate description (5 pages max., 2 pt)[0/2]
-   - [ ] Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups.
-   - [ ] One qualitative, one quantitative: Compare the means, variances and CVs of the quantitative variable for each category of the other one. Compare histograms or boxplots of the quantitative variable for each category of the other one.
- Both quantitative: scatterplot, covariance, Pearson correlation coef.,
- regression line of a target variable in terms of one/several
- explanatory variables.
-=======
-** Qualitative variables
-
-
-#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/regionPie.svg"
-  ggplot(brexit,aes(Region,fill = Region))+
-    geom_bar(width = 1)+
-    coord_polar()+
-    labs( x = "Region", y = "Number of localities")+
-    guides(fill=FALSE)
-#+END_SRC
-
-#+RESULTS:
-[[file:./pictures/regionPie.svg]]
-
-#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/noQualBar.svg"
-  ggplot(brexit,aes(NoQualification,fill = NoQualification))+
-    geom_bar()+
-    labs( x = "Level of unqualification", y = "Number of localities")+
-    guides(fill=FALSE)
-#+END_SRC
-
-#+RESULTS:
-[[file:./pictures/noQualBar.svg]]
-
-#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/epeBar.svg"
-  ggplot(brexit,aes(Won.Parliament,fill = Won.Parliament))+
-    geom_bar()+
-    labs( x = "Leading party during EPE of 2014", y = "Number of localities")+
-    guides(fill=FALSE)
-
-#+END_SRC
-
-#+RESULTS:
-[[file:./pictures/epeBar.svg]]
-
 * TODO Bivariate description (5 pages max., 2 pt)[1/3]
  - [X] Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups.
  - [ ] One qualitative, one quantitative: Compare the means, variances and CVs of the quantitative variable for each category of the other one. Compare histograms or boxplots of the quantitative variable for each category of the other one.
  - [ ] Both quantitative: scatterplot, covariance, Pearson correlation coef., regression line of a target variable in terms of one/several explanatory variables.
+
 ** Both qualitative 
 #+BEGIN_SRC R :exports results :results raw
   ascii(ftable(table(brexit$Won.Parliament,brexit$NoQualification)))
@@ -268,7 +226,6 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 | SNP  |   |   2 |      5 |    9 |
 | UKIP |   |  28 |     87 |   55 |
 
->>>>>>> 6a83a7e83b2ebbc4414eda172fc4114c9585fb27
  
 #+BEGIN_SRC R :exports results :results graphics :file "./pictures/epeRegionBar.svg"
   ggplot(na.omit(brexit),aes(Region))+
@@ -300,6 +257,7 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 ** Qualitative and Quantitative
 #+BEGIN_SRC R :exports results :results graphics :file "./pictures/epeLeave.svg"
   ggplot(na.omit(brexit),aes(Won.Parliament,Pct_Leave))+
+    geom_hline(linetype = 2,yintercept = 50,color="red")+
     geom_boxplot()
 #+END_SRC
 
@@ -308,21 +266,111 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 
 #+BEGIN_SRC R :exports results :results graphics :file "./pictures/noQualLeave.svg"
   ggplot(na.omit(brexit),aes(NoQualification,Pct_Leave))+
+    geom_hline(linetype = 2,yintercept = 50,color="red")+
     geom_boxplot()
 #+END_SRC
 
 #+RESULTS:
 [[file:./pictures/noQualLeave.svg]]
 
-#+BEGIN_SRC R  :exports results :results graphics :file "./pictures/regionPie.svg"
-ggplot(na.omit(brexit),aes(Region,fill=NoQualification))+
-    geom_bar(width = 1)+
-    coord_polar()+
-    labs( x = "Region", y = "Number of localities")
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/regionLeave.svg"
+  ggplot(na.omit(brexit),aes(Region,Pct_Leave))+
+    geom_boxplot()+
+    geom_hline(linetype = 2,yintercept = 50,color="red")+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/regionPie.svg]]
+[[file:./pictures/regionLeave.svg]]
+
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/QualQuanMatrics.svg"
+
+  plotList <- list()
+  for (i in 1:12) {
+    plotList[[i]] <- ggally_text(paste("Plot #", i, sep = ""))
+  }
+  plotList[[1]] <- ggplot(na.omit(brexit),aes(Region,Pct_Leave))+
+    geom_boxplot()+
+    geom_hline(linetype = 2,yintercept = 50,color="red")+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  plotList[[4]] <- ggplot(na.omit(brexit),aes(Region,Mean.Age))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  plotList[[7]] <- ggplot(na.omit(brexit),aes(Region,UniQualification))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  plotList[[10]] <- ggplot(na.omit(brexit),aes(Region,Fluent))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  plotList[[2]] <- ggplot(na.omit(brexit),aes(NoQualification,Pct_Leave))+
+    geom_boxplot()+
+    geom_hline(linetype = 2,yintercept = 50,color="red")+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  plotList[[5]] <- ggplot(na.omit(brexit),aes(NoQualification,Mean.Age))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  plotList[[8]] <- ggplot(na.omit(brexit),aes(NoQualification,UniQualification))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  plotList[[11]] <- ggplot(na.omit(brexit),aes(NoQualification,Fluent))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    
+  plotList[[3]] <- ggplot(na.omit(brexit),aes(Won.Parliament,Pct_Leave))+
+    geom_boxplot()+
+    geom_hline(linetype = 2,yintercept = 50,color="red")+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  plotList[[6]] <- ggplot(na.omit(brexit),aes(Won.Parliament,Mean.Age))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  plotList[[9]] <- ggplot(na.omit(brexit),aes(Won.Parliament,UniQualification))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  plotList[[12]] <- ggplot(na.omit(brexit),aes(Won.Parliament,Fluent))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  pm <- ggmatrix(
+    plotList,
+    nrow = 4, ncol = 3,
+    yAxisLabels = c("Pct_Leave", "Mean.Age", "UniQualification","Fluent"),
+    xAxisLabels = c("Region","NoQualification", "Won.Parliament"),
+    title = "Matrix Title"
+  )
+  pm
+#+END_SRC
+
+#+RESULTS:
+[[file:./pictures/QualQuanMatrics.svg]]
+
+** Both quantitative 
+
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/QuanMatrics.svg"
+ggscatmat(brexit,columns = c ("Pct_Leave","Mean.Age","Fluent","UniQualification"),alpha = 0.5)  
+#+END_SRC
+
+#+RESULTS:
+[[file:./pictures/QuanMatrics.svg]]
+
+
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/ageLeave.svg"
+  ggplot(na.omit(brexit),aes(Mean.Age,Pct_Leave))+
+    geom_point()+
+    geom_smooth(method = "loess", se = TRUE)
+#+END_SRC
+
+#+RESULTS:
+[[file:./pictures/ageLeave.svg]]
 
 * TODO Inference (2 pages max., 1 pt)[0/4]
  - [ ] Confidence interval for a difference of two proportion.
@@ -330,11 +378,8 @@ ggplot(na.omit(brexit),aes(Region,fill=NoQualification))+
  - [ ] Hypothesis testing for the equality of two proportions.
  - [ ] Hypothesis testing for equality of two means.
 
-<<<<<<< HEAD
 * TODO Sampling (2 pages max., 1.5 pt)[0/2]
-=======
 * TODO Sampling (2 pages max., 1.5 pt)[0/3]
->>>>>>> 6a83a7e83b2ebbc4414eda172fc4114c9585fb27
  - [ ] Treat your data as the population of interest and take a stratified sample using as strata the categories of one of the qualitative variable and applying simple random sampling within each strata. You first need to decide the total sample size. Secondly, you need to allocate this total sample size in the strata. Comment on the common methods for sample allocation that exist in the literature. Select your preferred method (justify your decision) and obtain the sample size within each stratum.
  - [ ] With the sample drawn in 7.1, estimate unbiasedly the population mean of a quantitative variable of interest. Estimate unbiasedly the population proportion of a qualitative variable. With the sample drawn in 7.1, estimate unbiasedly the means of a quantitative variable of interest for each stratum. Estimate unbiasedly the proportion of a qualitative variable for each stratum.
 
