@@ -225,6 +225,8 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 #+END_SRC
 
 #+RESULTS:
+Error in ascii(CrossTable(brexit$Won.Parliament, brexit$NoQualification)) : 
+  could not find function "CrossTable"
 
  
    Cell Contents
@@ -504,6 +506,7 @@ brexit$Won.Parliament |       Low |    Medium |      High | Row Total |
 #+END_SRC
 
 #+RESULTS:
+[[file:./pictures/QualQuanMatrics.svg]]
 file:./pictures/QualQuanMatrics.svg
 
 ** Both quantitative 
