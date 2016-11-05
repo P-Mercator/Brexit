@@ -1,8 +1,9 @@
 #+TITLE: Brexit
 #+AUTHOR: Pierre Mercatoris
 #+PROPERTY: header-args:R  :session *brexit*
-#+PROPERTY: header-args cache yes 
-#+PROPERTY: header-args exports results
+#+PROPERTY: header-args :cache yes 
+#+PROPERTY: header-args :results output 
+#+PROPERTY: header-args :exports results
 #+OPTIONS: ^:nil
 
 #+BEGIN_SRC R :exports none
@@ -11,6 +12,7 @@
   library(pastecs)
   library(ascii)
   library(GGally)
+  library(gmodels)
                                           # allows to export tables to org
   options(asciiType="org")
   brexit <- read.csv("data/DataBrexit.csv")
@@ -20,7 +22,7 @@
 #+END_SRC
 
 #+RESULTS:
-: 0
+: -1
 
 * TODO Introduction (1 page max., 0.5 pt)[0/3]
  - [ ] Describe briefly the topic of the Project and the motivations (which kind of information or evidences would you like to find out).
@@ -39,6 +41,7 @@
 |                  |                         | are considered regions               |                         |
 | Area             | Local authorities of UK | Brexit referendum                    | Qualitative nominal     |
 | Pct_Leave        | % of vote to leave EU   | Brexit referendum                    | Quantitative continuous |
+| Leave            | Pct_Leave over 50       | Categorised from Pct_Leave           | Qualitative nominal     |
 | Mean.Age         | Mean age                | Age on 27th March 2011               | Quantitative continuous |
 |                  |                         | Census 2011                          |                         |
 | NoQualification  | % without any diploma   | Census 2011                          | Quantitative continuous |
@@ -46,40 +49,20 @@
 | Fluent           | % English proficient    | Census 2011                          | Quantitative continuous |
 | Won.Parliament   | Party leading EPE       | EPE 2014                             | Qualitative nominal     |
 
-** Reducing NoQualification
-
-In order to have 3 qualitative and 3 quantitative variables to analyse alongside Pct_Leave, NoQualification was categorised into 3 groups (High, Medium and Low), transforming it into a qualitative ordinal variable. This variable was chosen its distribution (fig. [[fig:noQualDis]]) is normal and can be split relatively equally around the mean (\mu) using its standard deviation (\sigma). All values $x$ where, $ x > \mu + 0.5 \sigma$ were considered as High, $\mu - 0.5 \sigma < x < \mu + 0.5 \sigma$ considered Medium and $x < \mu - 0.5 \sigma$ considered Low.  
-
-#+BEGIN_SRC R :results output graphics :file "./pictures/noQualDis.svg" 
-  x <- mean(brexit$NoQualification,na.rm = T)
-  ggplot(brexit,aes(NoQualification))+
-    geom_histogram(aes(y = ..density..))+
-    geom_density()+
-                                          # Add lines on mean +- sd
-    geom_vline(linetype = 2,xintercept = mean(brexit$NoQualification,na.rm = T)+0.5*sd(brexit$NoQualification,na.rm = T),color="red")+
-    geom_vline(linetype = 2, xintercept = mean(brexit$NoQualification,na.rm = T)-0.5*sd(brexit$NoQualification,na.rm = T),color="red")+
-    labs( x = "% of population holding no qualification", y = "Density")
-
-#+END_SRC
-
-#+NAME: fig:noQualDis
-#+CAPTION: Density plot and histogram of the % of the population holding no qualification. The red dotted lines show the split for the reduction to High, Medium, Low.
-#+RESULTS:
-[[file:./pictures/noQualDis.svg]]
 
 #+BEGIN_SRC R :exports none
-  # categorise the data and label it
-  brexit$NoQualification <- cut(brexit$NoQualification,c(0,mean(brexit$NoQualification,na.rm = T)-0.5*sd(brexit$NoQualification,na.rm = T),mean(brexit$NoQualification,na.rm = T)+0.5*sd(brexit$NoQualification,na.rm = T),max(brexit$NoQualification,na.rm=T)),labels=c("Low","Medium","High"))
-  head(brexit$NoQualification)
+  brexit$Leave <- cut(brexit$Pct_Leave, c(0,50,100),labels=c("No","Yes"))
+  head(brexit$Leave)
 #+END_SRC
 
 #+RESULTS:
-| Medium |
-| Medium |
-| Medium |
-| High   |
-| Low    |
-| Low    |
+| Yes |
+| Yes |
+| Yes |
+| Yes |
+| Yes |
+| Yes |
+
 
 * TODO Univariariate description (3 pages max., 2 pt)[2/2]
    - [X] Qualitative variables: Frequency tables, Barplots or Piechars.
@@ -90,25 +73,25 @@ In order to have 3 qualitative and 3 quantitative variables to analyse alongside
   #+END_SRC
 
   #+RESULTS:
-  |    | Region                      | Pct_Leave     | Mean.Age      | NoQualification | UniQualification | Fluent        | Won.Parliament |
-  |----+-----------------------------+---------------+---------------+-----------------+------------------+---------------+----------------|
-  |  1 | East                    :47 | Min.   : 4.09 | Min.   :30.93 | Low   :124      | Min.   :14.00    | Min.   :59.00 | Con : 84       |
-  |  2 | East Midlands           :40 | 1st Qu.:47.14 | 1st Qu.:38.79 | Medium:132      | 1st Qu.:22.00    | 1st Qu.:92.00 | Lab :100       |
-  |  3 | London                  :33 | Median :54.27 | Median :40.39 | High  :114      | Median :26.00    | Median :96.00 | LD  :  4       |
-  |  4 | North East              :12 | Mean   :52.99 | Mean   :40.32 | NA's  : 12      | Mean   :26.68    | Mean   :93.63 | SNP : 16       |
-  |  5 | Northern Ireland        : 1 | 3rd Qu.:60.34 | 3rd Qu.:42.19 |                 | 3rd Qu.:31.00    | 3rd Qu.:98.00 | UKIP:173       |
-  |  6 | North West              :39 | Max.   :75.56 | Max.   :47.69 |                 | Max.   :54.00    | Max.   :99.00 | NA's:  5       |
-  |  7 | Scotland                :32 |               | NA's   :12    |                 | NA's   :12       | NA's   :12    |                |
-  |  8 | South East              :67 |               |               |                 |                  |               |                |
-  |  9 | South West              :38 |               |               |                 |                  |               |                |
-  | 10 | Wales                   :22 |               |               |                 |                  |               |                |
-  | 11 | West Midlands           :30 |               |               |                 |                  |               |                |
-  | 12 | Yorkshire and The Humber:21 |               |               |                 |                  |               |                |
+  |    | Region                      | Pct_Leave     | Mean.Age      | NoQualification | UniQualification | Fluent        | Won.Parliament | Leave   |
+  |----+-----------------------------+---------------+---------------+-----------------+------------------+---------------+----------------+---------|
+  |  1 | East                    :47 | Min.   : 4.09 | Min.   :30.93 | Min.   :10.00   | Min.   :14.00    | Min.   :59.00 | Con : 84       | No :119 |
+  |  2 | East Midlands           :40 | 1st Qu.:47.14 | 1st Qu.:38.79 | 1st Qu.:19.00   | 1st Qu.:22.00    | 1st Qu.:92.00 | Lab :100       | Yes:263 |
+  |  3 | London                  :33 | Median :54.27 | Median :40.39 | Median :23.00   | Median :26.00    | Median :96.00 | LD  :  4       |         |
+  |  4 | North East              :12 | Mean   :52.99 | Mean   :40.32 | Mean   :22.98   | Mean   :26.68    | Mean   :93.63 | SNP : 16       |         |
+  |  5 | North West              :39 | 3rd Qu.:60.34 | 3rd Qu.:42.19 | 3rd Qu.:27.00   | 3rd Qu.:31.00    | 3rd Qu.:98.00 | UKIP:173       |         |
+  |  6 | Northern Ireland        : 1 | Max.   :75.56 | Max.   :47.69 | Max.   :36.00   | Max.   :54.00    | Max.   :99.00 | NA's:  5       |         |
+  |  7 | Scotland                :32 |               | NA's   :12    | NA's   :12      | NA's   :12       | NA's   :12    |                |         |
+  |  8 | South East              :67 |               |               |                 |                  |               |                |         |
+  |  9 | South West              :38 |               |               |                 |                  |               |                |         |
+  | 10 | Wales                   :22 |               |               |                 |                  |               |                |         |
+  | 11 | West Midlands           :30 |               |               |                 |                  |               |                |         |
+  | 12 | Yorkshire and The Humber:21 |               |               |                 |                  |               |                |         |
 
 ** Qualitative variables
 
 
-#+BEGIN_SRC R :results output graphics :file "./pictures/regionPie.svg"
+#+BEGIN_SRC R :results graphics :file "./pictures/regionPie.png"
   ggplot(brexit,aes(Region))+
     geom_bar(width = 1)+
     coord_polar()+
@@ -117,19 +100,19 @@ In order to have 3 qualitative and 3 quantitative variables to analyse alongside
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/regionPie.svg]]
+[[file:./pictures/regionPie.png]]
 
-#+BEGIN_SRC R  :results output graphics :file "./pictures/noQualBar.svg"
-  ggplot(brexit,aes(NoQualification,fill = NoQualification))+
+#+BEGIN_SRC R  :results graphics :file "./pictures/noQualBar.png"
+  ggplot(brexit,aes(Leave,fill = NoQualification))+
     geom_bar()+
-    labs( x = "Level of unqualification", y = "Number of localities")+
+    labs( x = "Wanting to leave the EU", y = "Number of localities")+
     guides(fill=FALSE)
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/noQualBar.svg]]
+[[file:./pictures/noQualBar.png]]
 
-#+BEGIN_SRC R  :results graphics :file "./pictures/epeBar.svg"
+#+BEGIN_SRC R  :results graphics :file "./pictures/epeBar.png"
   ggplot(na.omit(brexit),aes(Won.Parliament,fill = Won.Parliament))+
     geom_bar()+
     labs( x = "Leading party during EPE of 2014", y = "Number of localities")+
@@ -138,7 +121,7 @@ In order to have 3 qualitative and 3 quantitative variables to analyse alongside
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/epeBar.svg]]
+[[file:./pictures/epeBar.png]]
 
 ** Quantitative variables
 #+BEGIN_SRC R :results output raw 
@@ -169,7 +152,7 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 | normtest.W   |      0.96 |     0.99 |             0.95 |
 | normtest.p   |      0.00 |     0.01 |             0.00 |
 
-#+BEGIN_SRC R :results graphics :file "./pictures/uniQualDis.svg"
+#+BEGIN_SRC R :results graphics :file "./pictures/uniQualDis.png"
   ggplot(brexit,aes(UniQualification))+
     geom_histogram(aes(y = ..density..))+
     geom_density()+
@@ -179,9 +162,9 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 #+NAME: graphic1
 #+CAPTION: Hello
 #+RESULTS:
-[[file:./pictures/uniQualDis.svg]]
+[[file:./pictures/uniQualDis.png]]
 
-#+BEGIN_SRC R :results graphics :file "./pictures/ageDis.svg"
+#+BEGIN_SRC R :results graphics :file "./pictures/ageDis.png"
   ggplot(brexit,aes(Mean.Age))+
     geom_histogram(aes(y = ..density..))+
     geom_density()+
@@ -189,9 +172,9 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/ageDis.svg]]
+[[file:./pictures/ageDis.png]]
 
-#+BEGIN_SRC R :results graphics :file "./pictures/fluentDis.svg"
+#+BEGIN_SRC R :results graphics :file "./pictures/fluentDis.png"
   ggplot(brexit,aes(Fluent))+
     geom_histogram(aes(y = ..density..))+
     geom_density()+
@@ -200,9 +183,9 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/fluentDis.svg]]
+[[file:./pictures/fluentDis.png]]
 
-#+BEGIN_SRC R  :results graphics :file "./pictures/leavePctDis.svg"
+#+BEGIN_SRC R  :results graphics :file "./pictures/leavePctDis.png"
   ggplot(brexit,aes(Pct_Leave))+
     geom_histogram(aes(y = ..density..))+
     geom_density()+
@@ -210,7 +193,7 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/leavePctDis.svg]]
+[[file:./pictures/leavePctDis.png]]
 
 * TODO Bivariate description (5 pages max., 2 pt)[3/3]
 
@@ -220,225 +203,60 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 
 ** Both qualitative 
 
-#+BEGIN_SRC R :results output raw
-  ascii(CrossTable(brexit$Won.Parliament,brexit$NoQualification))
+#+BEGIN_SRC R :results raw
+  ascii(CrossTable(brexit$Won.Parliament,brexit$Leave))
 #+END_SRC
 
 #+RESULTS:
-Error in ascii(CrossTable(brexit$Won.Parliament, brexit$NoQualification)) : 
-  could not find function "CrossTable"
 
- 
-   Cell Contents
-|-------------------------|
-|                       N |
-| Chi-square contribution |
-|           N / Row Total |
-|           N / Col Total |
-|         N / Table Total |
-|-------------------------|
 
- 
-Total Observations in Table:  367 
-
- 
-                      | brexit$NoQualification 
-brexit$Won.Parliament |       Low |    Medium |      High | Row Total | 
-----------------------|-----------|-----------|-----------|-----------|
-                  Con |        64 |        13 |         3 |        80 | 
-                      |    52.614 |     8.474 |    19.212 |           | 
-                      |     0.800 |     0.163 |     0.037 |     0.218 | 
-                      |     0.525 |     0.099 |     0.026 |           | 
-                      |     0.174 |     0.035 |     0.008 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                  Lab |        27 |        25 |        46 |        98 | 
-                      |     0.955 |     2.848 |     7.952 |           | 
-                      |     0.276 |     0.255 |     0.469 |     0.267 | 
-                      |     0.221 |     0.191 |     0.404 |           | 
-                      |     0.074 |     0.068 |     0.125 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                   LD |         1 |         1 |         1 |         3 | 
-                      |     0.000 |     0.005 |     0.005 |           | 
-                      |     0.333 |     0.333 |     0.333 |     0.008 | 
-                      |     0.008 |     0.008 |     0.009 |           | 
-                      |     0.003 |     0.003 |     0.003 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                  SNP |         2 |         5 |         9 |        16 | 
-                      |     2.071 |     0.089 |     3.268 |           | 
-                      |     0.125 |     0.312 |     0.562 |     0.044 | 
-                      |     0.016 |     0.038 |     0.079 |           | 
-                      |     0.005 |     0.014 |     0.025 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                 UKIP |        28 |        87 |        55 |       170 | 
-                      |    14.385 |    11.415 |     0.091 |           | 
-                      |     0.165 |     0.512 |     0.324 |     0.463 | 
-                      |     0.230 |     0.664 |     0.482 |           | 
-                      |     0.076 |     0.237 |     0.150 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-         Column Total |       122 |       131 |       114 |       367 | 
-                      |     0.332 |     0.357 |     0.311 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-
- 
-- 64
-- 0.8
-- 0.524590163934426
-- 0.174386920980926
-
- 
-   Cell Contents
-|-------------------------|
-|                       N |
-| Chi-square contribution |
-|           N / Row Total |
-|           N / Col Total |
-|         N / Table Total |
-|-------------------------|
-
- 
-Total Observations in Table:  367 
-
- 
-                      | brexit$NoQualification 
-brexit$Won.Parliament |       Low |    Medium |      High | Row Total | 
-----------------------|-----------|-----------|-----------|-----------|
-                  Con |        64 |        13 |         3 |        80 | 
-                      |    52.614 |     8.474 |    19.212 |           | 
-                      |     0.800 |     0.163 |     0.037 |     0.218 | 
-                      |     0.525 |     0.099 |     0.026 |           | 
-                      |     0.174 |     0.035 |     0.008 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                  Lab |        27 |        25 |        46 |        98 | 
-                      |     0.955 |     2.848 |     7.952 |           | 
-                      |     0.276 |     0.255 |     0.469 |     0.267 | 
-                      |     0.221 |     0.191 |     0.404 |           | 
-                      |     0.074 |     0.068 |     0.125 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                   LD |         1 |         1 |         1 |         3 | 
-                      |     0.000 |     0.005 |     0.005 |           | 
-                      |     0.333 |     0.333 |     0.333 |     0.008 | 
-                      |     0.008 |     0.008 |     0.009 |           | 
-                      |     0.003 |     0.003 |     0.003 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                  SNP |         2 |         5 |         9 |        16 | 
-                      |     2.071 |     0.089 |     3.268 |           | 
-                      |     0.125 |     0.312 |     0.562 |     0.044 | 
-                      |     0.016 |     0.038 |     0.079 |           | 
-                      |     0.005 |     0.014 |     0.025 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                 UKIP |        28 |        87 |        55 |       170 | 
-                      |    14.385 |    11.415 |     0.091 |           | 
-                      |     0.165 |     0.512 |     0.324 |     0.463 | 
-                      |     0.230 |     0.664 |     0.482 |           | 
-                      |     0.076 |     0.237 |     0.150 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-         Column Total |       122 |       131 |       114 |       367 | 
-                      |     0.332 |     0.357 |     0.311 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-
- 
-- 64
-- 0.8
-- 0.524590163934426
-- 0.174386920980926
-
- 
-   Cell Contents
-|-------------------------|
-|                       N |
-| Chi-square contribution |
-|           N / Row Total |
-|           N / Col Total |
-|         N / Table Total |
-|-------------------------|NoQualificaiton
-
- 
-Total Observations in Table:  367 
-
- 
-                      | brexit$NoQualification 
-brexit$Won.Parliament |       Low |    Medium |      High | Row Total | 
-----------------------|-----------|-----------|-----------|-----------|
-                  Con |        64 |        13 |         3 |        80 | 
-                      |    52.614 |     8.474 |    19.212 |           | 
-                      |     0.800 |     0.163 |     0.037 |     0.218 | 
-                      |     0.525 |     0.099 |     0.026 |           | 
-                      |     0.174 |     0.035 |     0.008 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                  Lab |        27 |        25 |        46 |        98 | 
-                      |     0.955 |     2.848 |     7.952 |           | 
-                      |     0.276 |     0.255 |     0.469 |     0.267 | 
-                      |     0.221 |     0.191 |     0.404 |           | 
-                      |     0.074 |     0.068 |     0.125 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                   LD |         1 |         1 |         1 |         3 | 
-                      |     0.000 |     0.005 |     0.005 |           | 
-                      |     0.333 |     0.333 |     0.333 |     0.008 | 
-                      |     0.008 |     0.008 |     0.009 |           | 
-                      |     0.003 |     0.003 |     0.003 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                  SNP |         2 |         5 |         9 |        16 | 
-                      |     2.071 |     0.089 |     3.268 |           | 
-                      |     0.125 |     0.312 |     0.562 |     0.044 | 
-                      |     0.016 |     0.038 |     0.079 |           | 
-                      |     0.005 |     0.014 |     0.025 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-                 UKIP |        28 |        87 |        55 |       170 | 
-                      |    14.385 |    11.415 |     0.091 |           | 
-                      |     0.165 |     0.512 |     0.324 |     0.463 | 
-                      |     0.230 |     0.664 |     0.482 |           | 
-                      |     0.076 |     0.237 |     0.150 |           | 
-----------------------|-----------|-----------|-----------|-----------|
-         Column Total |       122 |       131 |       114 |       367 | 
-                      |     0.332 |     0.357 |     0.311 |           | 
-----------------------|-----------|-----------|-----------|-----------|
 
 #+BEGIN_SRC R :exports results :results output raw
-  ascii(ftable(table(brexit$Won.Parliament,brexit$NoQualification)))
+  ascii(ftable(table(brexit$Won.Parliament,brexit$Leave)))
 
 #+END_SRC
 
 #+RESULTS:
-|      |   | Low | Medium | High |
-|------+---+-----+--------+------|
-|      |   |     |        |      |
-| Con  |   |  64 |     13 |    3 |
-| Lab  |   |  27 |     25 |   46 |
-| LD   |   |   1 |      1 |    1 |
-| SNP  |   |   2 |      5 |    9 |
-| UKIP |   |  28 |     87 |   55 |
+|      |   | No | Yes |
+|------+---+----+-----|
+|      |   |    |     |
+| Con  |   | 43 |  41 |
+| Lab  |   | 46 |  54 |
+| LD   |   |  4 |   0 |
+| SNP  |   | 16 |   0 |
+| UKIP |   |  7 | 166 |
 
-#+BEGIN_SRC R :results graphics :file "./pictures/epeNoQualBar.svg"
-  ggplot(na.omit(brexit),aes(Won.Parliament))+
-    geom_bar(aes(fill = NoQualification),position="fill")+
+#+BEGIN_SRC R :results graphics :file "./pictures/epeNoQualBar.png"
+  ggplot(na.omit(brexit),aes(Leave))+
+    geom_bar(aes(fill = Won.Parliament),position="fill")+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/epeNoQualBar.svg]]
+[[file:./pictures/epeNoQualBar.png]]
  
-#+BEGIN_SRC R :results graphics :file "./pictures/epeRegionBar.svg"
+#+BEGIN_SRC R :results graphics :file "./pictures/epeRegionBar.png"
   ggplot(na.omit(brexit),aes(Region))+
     geom_bar(aes(fill = Won.Parliament),position="fill")+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/epeRegionBar.svg]]
+[[file:./pictures/epeRegionBar.png]]
 
-#+BEGIN_SRC R :results graphics :file "./pictures/noQualRegionBar.svg"
+#+BEGIN_SRC R :results graphics :file "./pictures/noQualRegionBar.png"
   ggplot(na.omit(brexit),aes(Region))+
-    geom_bar(aes(fill = NoQualification),position="fill")+
+    geom_bar(aes(fill = Leave),position="fill")+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/noQualRegionBar.svg]]
+[[file:./pictures/noQualRegionBar.png]]
 
 
 ** Qualitative and Quantitative
 
-#+BEGIN_SRC R :results graphics :file "./pictures/QualQuanMatrics.svg"
+#+BEGIN_SRC R :results graphics :file "./pictures/QualQuanMatrics.png"
 
   plotList <- list()
   for (i in 1:12) {
@@ -461,20 +279,20 @@ brexit$Won.Parliament |       Low |    Medium |      High | Row Total |
     geom_boxplot()+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-  plotList[[2]] <- ggplot(na.omit(brexit),aes(NoQualification,Pct_Leave))+
+  plotList[[2]] <- ggplot(na.omit(brexit),aes(Leave,Pct_Leave))+
     geom_boxplot()+
     geom_hline(linetype = 2,yintercept = 50,color="red")+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-  plotList[[5]] <- ggplot(na.omit(brexit),aes(NoQualification,Mean.Age))+
+  plotList[[5]] <- ggplot(na.omit(brexit),aes(Leave,Mean.Age))+
     geom_boxplot()+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-  plotList[[8]] <- ggplot(na.omit(brexit),aes(NoQualification,UniQualification))+
+  plotList[[8]] <- ggplot(na.omit(brexit),aes(Leave,UniQualification))+
     geom_boxplot()+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-  plotList[[11]] <- ggplot(na.omit(brexit),aes(NoQualification,Fluent))+
+  plotList[[11]] <- ggplot(na.omit(brexit),aes(Leave,Fluent))+
     geom_boxplot()+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
     
@@ -499,32 +317,40 @@ brexit$Won.Parliament |       Low |    Medium |      High | Row Total |
     plotList,
     nrow = 4, ncol = 3,
     yAxisLabels = c("Pct_Leave", "Mean.Age", "UniQualification","Fluent"),
-    xAxisLabels = c("Region","NoQualification", "Won.Parliament"),
+    xAxisLabels = c("Region","Leave", "Won.Parliament"),
     title = "Matrix Title"
   )
   pm
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/QualQuanMatrics.svg]]
-file:./pictures/QualQuanMatrics.svg
+[[file:./pictures/QualQuanMatrics.png]]
+
 
 ** Both quantitative 
 
-#+BEGIN_SRC R :results graphics :file "./pictures/QuanMatrics.svg"
-ggscatmat(brexit,columns = c ("Pct_Leave","Mean.Age","Fluent","UniQualification"),alpha = 0.5)  
+#+BEGIN_SRC R :results graphics :file "./pictures/QuanMatrics.png"
+ggscatmat(brexit,columns = c ("Pct_Leave","Mean.Age","Fluent","UniQualification","NoQualification"),alpha = 0.5)  
 #+END_SRC
 
 #+RESULTS:
-[[file:./pictures/QuanMatrics.svg]]
+[[file:./pictures/QuanMatrics.png]]
 
 * TODO Inference (2 pages max., 1 pt)[0/4]
  - [ ] Confidence interval for a difference of two proportion.
  - [ ] Hypothesis testing for the equality of two proportions.
  - [ ] Confidence interval for a difference of two means.
  - [ ] Hypothesis testing for equality of two means.
- 
-** London lower UKIP than...
+** Proportions 
+*** Clear that people who voted UKIP at EPE wanted to leave 
+
+ Compare 0.040 to 0.960 or 0.019 to 0.440
+
+*** Did people voting Labour want to leave?
+
+ Compare 0.460 to 0.540 or 0.122 to 0.143
+
+** Sample means
 
 * TODO Sampling (2 pages max., 1.5 pt)[0/2]
  - [ ] Treat your data as the population of interest and take a stratified sample using as strata the categories of one of the qualitative variable and applying simple random sampling within each strata. You first need to decide the total sample size. Secondly, you need to allocate this total sample size in the strata. Comment on the common methods for sample allocation that exist in the literature. Select your preferred method (justify your decision) and obtain the sample size within each stratum.
