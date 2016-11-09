@@ -9,9 +9,11 @@
 #+BEGIN_SRC R :exports none
   rm(list = ls())
   library(ggplot2)
+  library(dplyr)
   library(pastecs)
   library(ascii)
   library(GGally)
+  library(sampling)
   library(gmodels)
                                           # allows to export tables to org
   options(asciiType="org")
@@ -22,7 +24,7 @@
 #+END_SRC
 
 #+RESULTS:
-: -1
+: 0
 
 * TODO Introduction (1 page max., 0.5 pt)[0/3]
  - [ ] Describe briefly the topic of the Project and the motivations (which kind of information or evidences would you like to find out).
@@ -195,6 +197,16 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 #+RESULTS:
 [[file:./pictures/leavePctDis.png]]
 
+#+BEGIN_SRC R  :results graphics :file "./pictures/NoQualification.png"
+  ggplot(brexit,aes(NoQualification))+
+    geom_histogram(aes(y = ..density..))+
+    geom_density()+
+    labs( x = "% of population without qualification", y = "Density")
+#+END_SRC
+
+#+RESULTS:
+[[file:./pictures/NoQualification.png]]
+
 * TODO Bivariate description (5 pages max., 2 pt)[3/3]
 
  - [X] Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups.
@@ -203,11 +215,64 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 
 ** Both qualitative 
 
-#+BEGIN_SRC R :results raw
-  ascii(CrossTable(brexit$Won.Parliament,brexit$Leave))
+#+BEGIN_SRC R :results output code
+  CrossTable(brexit$Won.Parliament,brexit$Leave)
 #+END_SRC
 
 #+RESULTS:
+#+BEGIN_SRC R
+
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  377 
+
+ 
+                      | brexit$Leave 
+brexit$Won.Parliament |        No |       Yes | Row Total | 
+----------------------|-----------|-----------|-----------|
+                  Con |        43 |        41 |        84 | 
+                      |    11.385 |     5.060 |           | 
+                      |     0.512 |     0.488 |     0.223 | 
+                      |     0.371 |     0.157 |           | 
+                      |     0.114 |     0.109 |           | 
+----------------------|-----------|-----------|-----------|
+                  Lab |        46 |        54 |       100 | 
+                      |     7.539 |     3.351 |           | 
+                      |     0.460 |     0.540 |     0.265 | 
+                      |     0.397 |     0.207 |           | 
+                      |     0.122 |     0.143 |           | 
+----------------------|-----------|-----------|-----------|
+                   LD |         4 |         0 |         4 | 
+                      |     6.231 |     2.769 |           | 
+                      |     1.000 |     0.000 |     0.011 | 
+                      |     0.034 |     0.000 |           | 
+                      |     0.011 |     0.000 |           | 
+----------------------|-----------|-----------|-----------|
+                  SNP |        16 |         0 |        16 | 
+                      |    24.923 |    11.077 |           | 
+                      |     1.000 |     0.000 |     0.042 | 
+                      |     0.138 |     0.000 |           | 
+                      |     0.042 |     0.000 |           | 
+----------------------|-----------|-----------|-----------|
+                 UKIP |         7 |       166 |       173 | 
+                      |    40.151 |    17.845 |           | 
+                      |     0.040 |     0.960 |     0.459 | 
+                      |     0.060 |     0.636 |           | 
+                      |     0.019 |     0.440 |           | 
+----------------------|-----------|-----------|-----------|
+         Column Total |       116 |       261 |       377 | 
+                      |     0.308 |     0.692 |           | 
+----------------------|-----------|-----------|-----------|
+#+END_SRC
 
 
 
@@ -259,7 +324,7 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
 #+BEGIN_SRC R :results graphics :file "./pictures/QualQuanMatrics.png"
 
   plotList <- list()
-  for (i in 1:12) {
+  for (i in 1:15) {
     plotList[[i]] <- ggally_text(paste("Plot #", i, sep = ""))
   }
   plotList[[1]] <- ggplot(na.omit(brexit),aes(Region,Pct_Leave))+
@@ -276,6 +341,10 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
   plotList[[10]] <- ggplot(na.omit(brexit),aes(Region,Fluent))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+  plotList[[13]] <- ggplot(na.omit(brexit),aes(Region,NoQualification))+
     geom_boxplot()+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -296,6 +365,10 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
     geom_boxplot()+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
     
+  plotList[[14]] <- ggplot(na.omit(brexit),aes(Leave,NoQualification))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
   plotList[[3]] <- ggplot(na.omit(brexit),aes(Won.Parliament,Pct_Leave))+
     geom_boxplot()+
     geom_hline(linetype = 2,yintercept = 50,color="red")+
@@ -313,10 +386,14 @@ ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE
     geom_boxplot()+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
+  plotList[[15]] <- ggplot(na.omit(brexit),aes(Won.Parliament,NoQualification))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
   pm <- ggmatrix(
     plotList,
-    nrow = 4, ncol = 3,
-    yAxisLabels = c("Pct_Leave", "Mean.Age", "UniQualification","Fluent"),
+    nrow = 5, ncol = 3,
+    yAxisLabels = c("Pct_Leave", "Mean.Age", "UniQualification","Fluent","NoQualification"),
     xAxisLabels = c("Region","Leave", "Won.Parliament"),
     title = "Matrix Title"
   )
@@ -336,30 +413,331 @@ ggscatmat(brexit,columns = c ("Pct_Leave","Mean.Age","Fluent","UniQualification"
 #+RESULTS:
 [[file:./pictures/QuanMatrics.png]]
 
-* TODO Inference (2 pages max., 1 pt)[0/4]
- - [ ] Confidence interval for a difference of two proportion.
- - [ ] Hypothesis testing for the equality of two proportions.
- - [ ] Confidence interval for a difference of two means.
- - [ ] Hypothesis testing for equality of two means.
+* TODO Inference (2 pages max., 1 pt)[4/4]
+ - [X] Confidence interval for a difference of two proportion.
+ - [X] Hypothesis testing for the equality of two proportions.
+ - [X] Confidence interval for a difference of two means.
+ - [X] Hypothesis testing for equality of two means.
 ** Proportions 
-*** Clear that people who voted UKIP at EPE wanted to leave 
 
- Compare 0.040 to 0.960 or 0.019 to 0.440
+*** What did Labour regions voted?
+    
+46 for No and 54 for Yes
 
-*** Did people voting Labour want to leave?
+#+BEGIN_SRC R
+    SE_diffProp <- function(p1,p2,n1,n2){
+    return (sqrt((p1*(1-p1)/n1)+(p2*(1-p2)/n2)))
+    }
+  p1=0.46
+  n1=100
+  p2=0.54
+  n2=100
 
- Compare 0.460 to 0.540 or 0.122 to 0.143
+  c(p2-p1-SE_diffProp(p1,p2,n1,n2),p2-p1+SE_diffProp(p1,p2,n1,n2))
+  c(p2-p1-1.96*SE_diffProp(p1,p2,n1,n2),p2-p1+1.96*SE_diffProp(p1,p2,n1,n2))
+#+END_SRC
+
+#+RESULTS:
+| -0.0581487198637758 |
+|   0.218148719863776 |
+
+#+BEGIN_SRC R
+  SE <- function(pbar,n){
+  return (sqrt(pbar*(1-pbar)/n))
+  }
+  c(0.46-1.96*SE(0.46,100),0.46+1.96*SE(0.46,100))
+#  c(0.54-1.96*SE(0.54,100),0.54+1.96*SE(0.54,100))
+#+END_SRC
+
+#+RESULTS:
+| 0.362314103372083 |
+| 0.557685896627917 |
+
+The proportions  are not independent as they come from the same population (number of people that voted Labour = 100)
+Their distribution is normal as there are not strongly skewed
+
+point estimate of difference between population:
+$$p_1-p_2 = 0.54 - 0.46 = 0.08 $$
+
+*** Did people from Conservative voted similarly to Labour
+**** Confidence interval for a difference of two proportions
+proportion of no
+  #+BEGIN_SRC R
+    SE_diffProp <- function(p1,p2,n1,n2){
+      return (sqrt((p1*(1-p1)/n1)+(p2*(1-p2)/n2)))
+    }
+    n1=84
+    p1=43/n1
+    n2=100
+    p2=46/n2
+
+    c(p1-p2-1.96*SE_diffProp(p1,p2,n1,n2),p1-p2+1.96*SE_diffProp(p1,p2,n1,n2))
+  #+END_SRC
+
+  #+RESULTS:
+  | -0.0929033395669854 |
+  |   0.196712863376509 |
+ #+BEGIN_SRC R
+    c(p1-p2-SE_diffProp(p1,p2,n1,n2),p1-p2+SE_diffProp(p1,p2,n1,n2))
+ #+END_SRC
+
+ #+RESULTS:
+ | -0.021976922519599 |
+ |  0.125786446329123 |
+
+**** Hypothesis testing for the equality of two proportions
+  $H_0$: There is no difference between the way conservative and labour regions voted   
+  $H_1$: The way conservative and labour  regions voted is different
+
+Estimate of p if the null is true (pooled proportion)
+#+BEGIN_SRC R
+pooled <- (p1*n1+p2*n2)/(n1+n2)
+#+END_SRC
+
+#+RESULTS:
+: 0.483695652173913
+
+#+BEGIN_SRC R :results output raw
+ascii(rbind(c("","No","Yes"),c("Con",pooled*n1,(1-pooled)*n1),c("Lab",pooled*n2,(1-pooled)*n2)))
+#+END_SRC
+
+#+RESULTS:
+|     |               No |              Yes |
+| Con | 40.6304347826087 | 43.3695652173913 |
+| Lab | 48.3695652173913 | 51.6304347826087 |
+
+All values are  over 10 and the success-failure condition is satisfied, we can therefore apply the normal model.
+
+Calculate the point estimate of the difference of proportion of No voters
+#+BEGIN_SRC R :results output raw
+point = p1-p2
+SE = sqrt(pooled*(1-pooled)/n1+pooled*(1-pooled)/n2)
+null = 0
+Z = (point - null)/SE
+p_value = 2 * pnorm(abs(Z))
+
+ascii(rbind(c("Difference","SE","Z","$p_value$"),c(point,SE,Z,p_value)))
+#+END_SRC
+
+#+RESULTS:
+|         Difference |                 SE |                 Z |        $p_value$ |
+| 0.0519047619047618 | 0.0739619327412691 | 0.701776711086406 | 1.51718157532207 |
+
+As the p-value is larger than 0.05, we cannot reject the null hypothesis. That is, the difference of the proportion of no voters between Conservative and Labour regions could have happened by chance.
 
 ** Sample means
 
-* TODO Sampling (2 pages max., 1.5 pt)[0/2]
- - [ ] Treat your data as the population of interest and take a stratified sample using as strata the categories of one of the qualitative variable and applying simple random sampling within each strata. You first need to decide the total sample size. Secondly, you need to allocate this total sample size in the strata. Comment on the common methods for sample allocation that exist in the literature. Select your preferred method (justify your decision) and obtain the sample size within each stratum.
- - [ ] With the sample drawn in 7.1, estimate unbiasedly the population mean of a quantitative variable of interest. Estimate unbiasedly the population proportion of a qualitative variable. With the sample drawn in 7.1, estimate unbiasedly the means of a quantitative variable of interest for each stratum. Estimate unbiasedly the proportion of a qualitative variable for each stratum.
- - use random sample
+*** Is there a significant difference between the mean percentage of uni qualification in yes and no?
+**** Confidence interval for a difference of two means
+     #+BEGIN_SRC R
+     boxplot(UniQualification~Leave,brexit)
+     #+END_SRC
+
+   #+BEGIN_SRC R :results output raw
+     SEm <- function(sample1,sample2){
+       sample1 <- sample1[!(is.na(sample1))]
+       sample2 <- sample2[!(is.na(sample2))]
+       return(sqrt(sd(sample1,na.rm=TRUE)^2/length(sample1)+sd(sample2)^2/length(sample2)))
+     }
+     x <- brexit$UniQualification[(brexit$Leave=="No")]
+     y <- brexit$UniQualification[(brexit$Leave=="Yes")]
+
+     point <- mean(x,na.rm=TRUE)-mean(y,na.rm=TRUE)
+
+     df <- min(c(length(x)-1,length(y)-1))
+
+
+     ascii(c(point-1.96*SEm(x,y),point+1.96*SEm(x,y)))
+   #+END_SRC
+
+   #+RESULTS:
+   | 7.35 | 10.56 |
+
+**** Hypothesis testing for equality of two means
+#+BEGIN_SRC R :results output code
+t.test(UniQualification~Leave,brexit,alternative="greater")
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC R
+
+	Welch Two Sample t-test
+
+data:  UniQualification by Leave
+t = 10.954, df = 148.04, p-value < 2.2e-16
+alternative hypothesis: true difference in means is greater than 0
+95 percent confidence interval:
+ 7.600305      Inf
+sample estimates:
+ mean in group No mean in group Yes 
+         32.90265          23.94942
+#+END_SRC
+
+The p value is lower than 0.05, showing that the mean of UniQualification for No voters is significantly bigger than the one for Yes voters.
+
+* TODO Sampling (2 pages max., 1.5 pt)[2/2]
+ - [X] Treat your data as the population of interest and take a stratified sample using as strata the categories of one of the qualitative variable and applying simple random sampling within each strata. You first need to decide the total sample size. Secondly, you need to allocate this total sample size in the strata. Comment on the common methods for sample allocation that exist in the literature. Select your preferred method (justify your decision) and obtain the sample size within each stratum.
+ - [X] With the sample drawn in 7.1, estimate unbiasedly the population mean of a quantitative variable of interest. Estimate unbiasedly the population proportion of a qualitative variable. With the sample drawn in 7.1, estimate unbiasedly the means of a quantitative variable of interest for each stratum. Estimate unbiasedly the proportion of a qualitative variable for each stratum use random sample
+** % Leave 
+#+BEGIN_SRC R
+  sample.size <- brexit %>%
+    group_by(Region)%>%
+    summarise(ceiling(length(Region)/10))
+  brexit.sort <- dplyr::arrange(brexit,order(Region))
+
+  brexit.strata <- strata(brexit.sort,stratanames=c("Region"),size=c(5,4,4,2,4,1,4,7,4,3,3,3),method="srswor")
+  brexit.sample <- brexit.sort[brexit.strata$ID_unit,]
+#+END_SRC
+
+#+BEGIN_SRC R :results output raw 
+ascii(cbind(rbind(c("mean","CI.mean.0.95"),stat.desc(brexit.sample$Pct_Leave)[c("mean","CI.mean.0.95")]),c("population mean",mean(brexit$Pct_Leave))))
+#+END_SRC
+
+#+RESULTS:
+|             mean |     CI.mean.0.95 |  population mean |
+| 54.7559090909091 | 3.14896488017232 | 52.9890052356021 |
+
+#+BEGIN_SRC R :results output raw
+  sem<-function(x){sd(x)/sqrt(length(x))}
+  pctLeaveRegion <- cbind(aggregate(Pct_Leave~Region,brexit.sample,mean),
+  1.96*aggregate(Pct_Leave~Region,brexit.sample,FUN=sem)[2],
+  aggregate(Pct_Leave~Region,brexit,mean)[2])
+  colnames(pctLeaveRegion) <- c("Region","mean","CI.mean.0.95","population mean")
+  ascii(pctLeaveRegion)
+#+END_SRC
+
+#+RESULTS:
+|    | Region                   |  mean | CI.mean.0.95 | population mean |
+|----+--------------------------+-------+--------------+-----------------|
+|  1 | East                     | 61.60 |         7.95 |           56.96 |
+|  2 | East Midlands            | 61.71 |         6.25 |           59.57 |
+|  3 | London                   | 49.77 |        13.61 |           39.09 |
+|  4 | North East               | 57.73 |         7.09 |           59.48 |
+|  5 | North West               | 59.19 |         5.48 |           55.92 |
+|  6 | Northern Ireland         | 44.22 |              |           44.22 |
+|  7 | Scotland                 | 36.38 |         7.18 |           39.14 |
+|  8 | South East               | 49.40 |         4.05 |           52.17 |
+|  9 | South West               | 58.09 |         3.59 |           52.38 |
+| 10 | Wales                    | 52.35 |         4.50 |           53.35 |
+| 11 | West Midlands            | 61.58 |         9.86 |           60.31 |
+| 12 | Yorkshire and The Humber | 64.48 |         9.08 |           58.65 |
+
+** Proportion of localities wanting to leave EU
+#+BEGIN_SRC R :results output code
+  CrossTable(brexit.sample$Won.Parliament,brexit.sample$Leave)
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC R
+
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  43 
+
+ 
+                             | brexit.sample$Leave 
+brexit.sample$Won.Parliament |        No |       Yes | Row Total | 
+-----------------------------|-----------|-----------|-----------|
+                         Con |         4 |         5 |         9 | 
+                             |     0.882 |     0.341 |           | 
+                             |     0.444 |     0.556 |     0.209 | 
+                             |     0.333 |     0.161 |           | 
+                             |     0.093 |     0.116 |           | 
+-----------------------------|-----------|-----------|-----------|
+                         Lab |         5 |         8 |        13 | 
+                             |     0.519 |     0.201 |           | 
+                             |     0.385 |     0.615 |     0.302 | 
+                             |     0.417 |     0.258 |           | 
+                             |     0.116 |     0.186 |           | 
+-----------------------------|-----------|-----------|-----------|
+                         SNP |         2 |         0 |         2 | 
+                             |     3.725 |     1.442 |           | 
+                             |     1.000 |     0.000 |     0.047 | 
+                             |     0.167 |     0.000 |           | 
+                             |     0.047 |     0.000 |           | 
+-----------------------------|-----------|-----------|-----------|
+                        UKIP |         1 |        18 |        19 | 
+                             |     3.491 |     1.351 |           | 
+                             |     0.053 |     0.947 |     0.442 | 
+                             |     0.083 |     0.581 |           | 
+                             |     0.023 |     0.419 |           | 
+-----------------------------|-----------|-----------|-----------|
+                Column Total |        12 |        31 |        43 | 
+                             |     0.279 |     0.721 |           | 
+-----------------------------|-----------|-----------|-----------|
+#+END_SRC
+
+#+BEGIN_SRC R :results output raw
+  p <- length(brexit.sample$Leave[brexit.sample$Leave=="Yes"])/length(brexit.sample$Leave)
+  SE <- sqrt(p*(1-p)/length(brexit.sample$Leave))
+  pop.mean <- length(brexit$Leave[brexit$Leave=="Yes"])/length(brexit$Leave)
+  ascii(rbind(c("mean","CI.mean.0.95","population mean"),c(p,1.96*SE,pop.mean)))
+#+END_SRC
+
+#+RESULTS:
+|              mean |      CI.mean.0.95 |  population mean |
+| 0.704545454545455 | 0.134812319104818 | 0.68848167539267 |
+
+#+BEGIN_SRC R :results output code
+    SE <- function(pbar,n){
+    return (sqrt(pbar*(1-pbar)/n))
+    }
+  p <- prop.table(table(brexit.sample$Region,brexit.sample$Leave),1)[,2]
+  n <- count(brexit.sample,Region)%>%
+    .$n
+  leaveRegion <- cbind(t(rbind(p,1.96*SE(p,n))),prop.table(table(brexit$Region,brexit$Leave),1)[,2])
+  colnames(leaveRegion) <- c("mean","CI.mean.0.95","population mean")
+  leaveRegion
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC R
+                              mean CI.mean.0.95 population mean
+East                     1.0000000    0.0000000       0.8936170
+East Midlands            1.0000000    0.0000000       0.9500000
+London                   0.2500000    0.4243524       0.1515152
+North East               1.0000000    0.0000000       0.9166667
+North West               1.0000000    0.0000000       0.8205128
+Northern Ireland         0.0000000    0.0000000       0.0000000
+Scotland                 0.0000000    0.0000000       0.0000000
+South East               0.4285714    0.3666061       0.6417910
+South West               1.0000000    0.0000000       0.7368421
+Wales                    0.6666667    0.5334444       0.7727273
+West Midlands            1.0000000    0.0000000       0.9666667
+Yorkshire and The Humber 1.0000000    0.0000000       0.8571429
+#+END_SRC
 
 * TODO Model selection (1 page max., 1 pt)[0/3]
  - [ ] Select the best probability distribution for at least one variable of interest. You might need to take some transformation (e.g. log).
  - [ ] Estimate the parameters of the distribution by the method of moments or by maximum likelihood.
+
+#+BEGIN_SRC R
+  g <- function(th,x) {
+    t1 <- th[1]
+    t2 <- th[2]
+    t12 <- t1 + t2
+    meanb <- t1 / t12
+    m1 <- meanb - x
+    m2 <- t1*t2 / (t12^2 * (t12+1)) - (x - meanb)^2
+    f <- cbind(m1,m2)
+    return(f)
+  }
+  z = (brexit$NoQualification-min(brexit$NoQualification,na.rm=TRUE))/(max(brexit$NoQualification,na.rm=TRUE)-min(brexit$NoQualification,na.rm=TRUE))
+  z <- z[!(is.na(z))]
+  gmm(g=g,x=z,c(alpha=0.1,beta=0.1))
+  x <- seq(0, 1, length = 100)
+  hist(z,xlim=c(0,1),probability=TRUE)
+  curve(dbeta(x,2.8053,2.8126),add=TRUE)
+#+END_SRC
 
 * TODO Conclusions (2 pages max., 1.5 pt)[0/2]
  - [ ] Summarize the most important conclusions of your analyses.
