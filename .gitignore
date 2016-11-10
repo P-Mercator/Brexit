@@ -6,6 +6,9 @@ auto
 *.html
 .DS_Store
 analyis.bbl
+*.lof
+*.lol
+*.lot
 .Rhistory
 dataSubmission
 dataSubmission.*
