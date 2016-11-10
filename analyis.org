@@ -1,3 +1,4 @@
+#+LaTeX_HEADER: \usepackage{listings}
 #+TITLE: Brexit
 #+AUTHOR: Pierre Mercatoris
 #+PROPERTY: header-args:R  :session *brexit*
@@ -5,6 +6,8 @@
 #+PROPERTY: header-args :results output 
 #+PROPERTY: header-args :exports results
 #+OPTIONS: ^:nil
+#+PROPERTY: header-args :eval never-export
+
 
 #+BEGIN_SRC R :exports none
   rm(list = ls())
@@ -15,6 +18,7 @@
   library(GGally)
   library(sampling)
   library(gmodels)
+  library(gmm)
                                           # allows to export tables to org
   options(asciiType="org")
   brexit <- read.csv("data/DataBrexit.csv")
@@ -26,17 +30,33 @@
 #+RESULTS:
 : 0
 
-* TODO Introduction (1 page max., 0.5 pt)[0/3]
- - [ ] Describe briefly the topic of the Project and the motivations (which kind of information or evidences would you like to find out).
- - [ ] Describe briefly the data set: source and what are the data about.
- - [ ] define what is your target population and what is your sample (in the case that they are different). give the total sample size.
+* DONE Introduction (1 page max., 0.5 pt)[3/3]
+<<introduction>>
+  CLOSED: [2016-11-10 Thu 00:23]
+ - [X] Describe briefly the topic of the Project and the motivations (which kind of information or evidences would you like to find out).
+ - [X] Describe briefly the data set: source and what are the data about.
+ - [X] define what is your target population and what is your sample (in the case that they are different). give the total sample size.
 
+The dataset analysed in this report is data from the Brexit vote that occurred on the 23rd of June 2016. This is an observational report and the data is actually the whole population where each record is a local authority of England, Wales, Northern Ireland and Scotland. Additionally to the percentage of /yes/ and /no/ vote, the data was enriched using records from the previous 2011 UK census. This is to try and recognise pattern where the mean age, qualification or English fluency of a locality have an effect on the Brexit outcome. Additionally, as the results of the last European Parliament Election (EPE) for the UK is available, we are also trying to see some parallel with Brexit.
+
+Brexit data was download from the [[http://www.electoralcommission.org.uk/find-information-by-subject/elections-and-referendums/past-elections-and-referendums/eu-referendum/electorate-and-count-information][electoral commission]] website. The variables retained are /Pct_Leave/, /Region/ and /Area/ were retained. /Pct_Leave/ is the percentage of the local authority that voted to leave the European Union. /Region/ are the main regions of the UK, where Scotland, Wales and Northern Ireland are each considered as a regions. /Area/ is the name of each local authority. 
+
+All census data was downloaded using the [[https://www.google.es/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwiW98rHo8HPAhVF7iYKHdQ6D6wQFggeMAA&url=http://infuse.mimas.ac.uk/&usg=AFQjCNHWMyI5mw_7zPbY_aYgBOSi2rxtVQ&sig2=0COoEWc5r66kIR4P6zwjvA][InFuse]] data portal and include the /Mean.Age/, the mean qualification level and English fluency of each locality. EPE results were downloaded from [[http://www.electoralcommission.org.uk/our-work/our-research/electoral-data][electoral commission]] website and only show the winning party of each local authority. 
+
+This observational data is the population of local authorities for ballot voter, and therefore does not include any vote by mail, as these would not be traceable to other Census or EPE data. For this reason, the global mean percentage of "Leave" votes is slightly higher (52.99%, see table ref:tab-uniSummary)than the final public result (51.90%). 
+
+My goal is not to provide an in depth analysis, but to provide with a general view of the variables and existing relationships. Basic hypothesis testing and confidence interval will be used to check for differences of mean and proportions for those relationships. This work should then be followed by some modelling in order to have a greater understanding for these.
  
-* TODO Description of variables and recoding (2 page max., 0.5 pt) [3/3]
+* DONE Description of variables and recoding (2 page max., 0.5 pt) [3/3]
+  CLOSED: [2016-11-10 Thu 01:19]
   - [X] Describe each of the variables that you will analyze in this project. What are they and how are they measured.
-  - [X] Mention the type of each variable, saying if it is qualitative or quantitative, and daulaepending on the case, nominal/ordinal or discrete/continuous.
+  - [X] Mention the type of each variable, saying if it is qualitative or quantitative, and depending on the case, nominal/ordinal or discrete/continuous.
   - [X] For variables with too many categories, try to reduce the number of categories by merging categories with similar meaning and recoding them. With fewer categories, interpretation is easier.
   
+  Table ref:tab-description provides a summary of each variable. As mentioned in the [[introduction][introduction]], each record is a local authority of the UK. Results for Northern Ireland were averaged across the country by the data source and so counts as a single record. /Region/ is one of the 12 main regions of the UK where Scotland, Wales and Northern Ireland are considered regions. /Pct_Leave/ is the percentage of vote to leave the EU in each local authority. 
+
+#+caption: Description of each variable. label:tab-description
+#+NAME: tab-description 
 | Variable         | What?                   | How?                                 | Type                    |
 |------------------+-------------------------+--------------------------------------+-------------------------|
 | Region           | 12 regions of UK        | Wales, Scotland and Northern Ireland | Qualitative nominal     |
@@ -51,29 +71,66 @@
 | Fluent           | % English proficient    | Census 2011                          | Quantitative continuous |
 | Won.Parliament   | Party leading EPE       | EPE 2014                             | Qualitative nominal     |
 
+The variables from Census and EPE data are the following:
 
-#+BEGIN_SRC R :exports none
+- /Mean.Age/ is the mean age in years of the population of each local authority recorded during the UK Census of 2011. The age was derived from the date of birth question and is a person's age at their last birthday, at 27 March 2011. Dates of birth that imply an age over 115 are treated as invalid and the person's age is imputed. Infants less than one year old are classified as 0 years of age.
+- /NoQualification/ and /UniQualification/ are variables describing the mean level of education of each local authority. During the Census, persons were asked their highest level of education, including foreign qualification. There were 12 response options (plus 'no qualifications') covering professional and vocational qualifications, and a range of academic qualifications These are combined into five categories for the highest level of qualification, plus a category for no qualifications and one for other qualifications (which includes vocational or work-related qualifications, and for foreign qualifications where an equivalent qualification was not indicated). From those 5 categories, the percentage of the population holding no qualification was computed in /NoQualification/ and the percentage the population holding a university degree in /UniQualification. Here are the original 5 categories:
+
+  - No Qualifications: No academic or professional qualifications.
+  - Level 1 qualifications: 1-4 O Levels/CSE/GCSEs (any grades), Entry Level, Foundation Diploma, NVQ level 1, Foundation GNVQ, Basic/Essential Skills. 
+  - Level 2 qualifications: 5+ O Level (Passes)/CSEs (Grade 1)/GCSEs (Grades A*-C), School Certificate, 1 A Level/ 2-3 AS Levels/VCEs, Intermediate/Higher Diploma, Welsh Baccalaureate Intermediate Diploma, NVQ level 2, Intermediate GNVQ, City and Guilds Craft, BTEC First/General Diploma, RSA Diploma Apprenticeship. 
+  - Level 3 qualifications: 2+ A Levels/VCEs, 4+ AS Levels, Higher School Certificate, Progression/Advanced Diploma, Welsh Baccalaureate Advanced Diploma, NVQ Level 3; Advanced GNVQ, City and Guilds Advanced Craft, ONC, OND, BTEC National, RSA Advanced Diploma. 
+  - Level 4+ qualifications: Degree (for example BA, BSc), Higher Degree (for example MA, PhD, PGCE), NVQ Level 4-5, HNC, HND, RSA Higher Diploma, BTEC Higher level, Foundation degree (NI), Professional qualifications (for example teaching, nursing, accountancy). 
+  - Other qualifications: Vocational/Work-related Qualifications, Foreign Qualifications (Not stated/ level unknown).
+ 
+- /Fluent/ represents the percentage of the population which considers themselves native or very good level of English. The data was derived from the Proficiency in English language of the Census data. It classifies people whose main language is not English (or not English or Welsh in Wales) according to their ability to speak English. A person is classified in one of the categories: can speak English very well; can speak English well; cannot speak English well; or cannot speak English. This question was handled slightly differently in the England and Wales censuses. In the English census a tick box was used in Question 18, asking "What is your main language?", giving the option of "English" or "Other". In the Welsh census, a tick box was used in Question 18, asking "What is your main language?", giving the option of "English or Welsh" or "Other". Those who ticked "other" would be asked about their ability to speak English. A consequence of this is that a person who reports their main language to be Welsh and completed the Welsh census, will not be asked about their ability to speak English. Whereas a person who indicates that their main language is Welsh and lives in England would be asked about "their ability to speak English.
+
+- /Won.Parliament/ shows the party that counted the most votes in each local authority during the European Parliament Election of 2014. This data is absent for Northern Ireland. The codes are described in table ref:tab-EPE.
+
+#+caption: Code of each british political party label:tab-EPE
+#+name: tab-EPE
+| Code  | Party                             |
+|-------+-----------------------------------|
+| Con   | Conservatives                     |
+| Lab   | Labour                            |
+| LD    | Liberal Democrat                  |
+| UKIP  | United Kingdom Independence Party |
+| Green | Green Party                       |
+| BNP   | British National Party            |
+| SNP   | Scottish National Party           |
+
+In order to facilitate some comparisons, /Pct_Leave/ was also classified as a categorical variable. Percentages lower than 50 were labelled as "No" and higher than 50 as "High". This was achieved with the following code.
+#+BEGIN_SRC R :exports both :results code
   brexit$Leave <- cut(brexit$Pct_Leave, c(0,50,100),labels=c("No","Yes"))
-  head(brexit$Leave)
+  tail(brexit$Leave)
 #+END_SRC
 
 #+RESULTS:
-| Yes |
-| Yes |
-| Yes |
-| Yes |
-| Yes |
-| Yes |
+#+BEGIN_SRC R
+Yes
+Yes
+Yes
+Yes
+No
+Yes
+#+END_SRC
+
+#+RESULTS:
 
 
-* TODO Univariariate description (3 pages max., 2 pt)[2/2]
+* DONE Univariariate description (3 pages max., 2 pt)[2/2]
+  CLOSED: [2016-11-10 Thu 10:29]
    - [X] Qualitative variables: Frequency tables, Barplots or Piechars.
    - [X] Quantitative variables: Frequency tables (intervals if continuous). Location measures (mean, median, quartiles), dispersion measures (variance, std. dev., CV, range, IQR), shape measures (asymmetry coefficients), Histogram or Boxplot.
 
-  #+BEGIN_SRC R :results output raw
+Basic summary statistics (table ref:tab-uniSummary) were obtained for the whole dataset allowing to get a quick sense of the nature of the data. It is then followed by the univariate description of each qualitative and quantitative variable.
+
+  #+BEGIN_SRC R :exports results :results output raw
     ascii(summary(brexit[,-2],maxsum=12))
   #+END_SRC
 
+  #+caption: Basic summary table of the dataset label:tab-uniSummary
+  #+NAME: tab-uniSummary
   #+RESULTS:
   |    | Region                      | Pct_Leave     | Mean.Age      | NoQualification | UniQualification | Fluent        | Won.Parliament | Leave   |
   |----+-----------------------------+---------------+---------------+-----------------+------------------+---------------+----------------+---------|
@@ -90,135 +147,175 @@
   | 11 | West Midlands           :30 |               |               |                 |                  |               |                |         |
   | 12 | Yorkshire and The Humber:21 |               |               |                 |                  |               |                |         |
 
+
 ** Qualitative variables
 
+Figure ref:fig-pieRegion shows a polar chart of the amount of local authority per region in the dataset. This shows that the "South East" and "East Midlands" most highly and "Northern Ireland" and "North East" most poorly represented.
 
-#+BEGIN_SRC R :results graphics :file "./pictures/regionPie.png"
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/pieRegion.png"
   ggplot(brexit,aes(Region))+
     geom_bar(width = 1)+
     coord_polar()+
     labs( x = "Region", y = "Number of localities")
-    # guides(fill=FALSE)
 #+END_SRC
 
+#+caption: Polar chart of the amount of local authority per region. label:fig-pieRegion
+#+NAME: fig-pieRegion
 #+RESULTS:
-[[file:./pictures/regionPie.png]]
+[[file:./pictures/pieRegion.png]]
 
-#+BEGIN_SRC R  :results graphics :file "./pictures/noQualBar.png"
+Figure ref:fig-barLeave shows that there were around double the amount of local authorities voting most predominantly for the "Yes". Though it is important to precise that this does not show how close the results were, the population of each locality and it under-represents greatly "Northern Ireland".
+
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/barLeave.png"
   ggplot(brexit,aes(Leave,fill = NoQualification))+
     geom_bar()+
-    labs( x = "Wanting to leave the EU", y = "Number of localities")+
-    guides(fill=FALSE)
+    labs( x = "Wanting to leave the EU", y = "Number of localities")
 #+END_SRC
 
+#+caption: Bar plot of the number of localities which had a higher proportions of "Yes" and "No" vote. label:fig-barLeave
+#+NAME: fig-barLeave
 #+RESULTS:
-[[file:./pictures/noQualBar.png]]
+[[file:./pictures/barLeave.png]]
 
-#+BEGIN_SRC R  :results graphics :file "./pictures/epeBar.png"
+Figure ref:fig-barEpe shows that UKIP was the most popular part across regions and has nearly as many votes than the Conservatives and Labout combined. Similarly to ref:fig-barLeave, this bar plot suffers from the same bias.
+
+#+BEGIN_SRC R :exports results  :results graphics :file "./pictures/barEpe.png"
   ggplot(na.omit(brexit),aes(Won.Parliament,fill = Won.Parliament))+
     geom_bar()+
-    labs( x = "Leading party during EPE of 2014", y = "Number of localities")+
-    guides(fill=FALSE)
-
+    labs( x = "Leading party during EPE of 2014", y = "Number of localities")
 #+END_SRC
 
+#+caption: Bar plot of the winning party of each local authority during the EPE of 2014. label:fig-barEpe
+#+NAME: fig-barEpe
 #+RESULTS:
-[[file:./pictures/epeBar.png]]
+[[file:./pictures/barEpe.png]]
 
 ** Quantitative variables
-#+BEGIN_SRC R :results output raw 
-ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification")],norm = TRUE, p = 0.95))
+
+   Table ref:tab-statQuan provides with a quick statistics to describe the location, distribution and shape of the quantitative variables. From there it is possible to see that /Fluent/ is strongly negatively skewed and shows that most localities have high English fluency, as expected. /NoQualification/ has the lest skewness and is therefore closer to a normal distribution. This is the reason why this variable was chosen for the [[model selection][model]] discussed later. A high standard deviation of /Pct_Leave/ shows the difference of opinion between localities. It is also notable that there are 12 missing values for the Census data. This is because Census data is only available for Scotland as a whole rather than its different regions. All relationship with Census data will therefore leave out Scotland from the analysis.
+
+#+BEGIN_SRC R :exports results :results output raw 
+ascii(stat.desc(brexit[c("Pct_Leave","Mean.Age","UniQualification","NoQualification","Fluent")],norm = TRUE, p = 0.95))
 #+END_SRC
 
+#+caption: More advanced statistics on the quantitative variables. label:tab-statQuan
+#+name: tab-statQuan
 #+RESULTS:
-|              | Pct_Leave | Mean.Age | UniQualification |
-|--------------+-----------+----------+------------------|
-| nbr.val      |    382.00 |   370.00 |           370.00 |
-| nbr.null     |      0.00 |     0.00 |             0.00 |
-| nbr.na       |      0.00 |    12.00 |            12.00 |
-| min          |      4.09 |    30.93 |            14.00 |
-| max          |     75.56 |    47.69 |            54.00 |
-| range        |     71.47 |    16.75 |            40.00 |
-| sum          |  20241.80 | 14918.74 |          9873.00 |
-| median       |     54.27 |    40.39 |            26.00 |
-| mean         |     52.99 |    40.32 |            26.68 |
-| SE.mean      |      0.55 |     0.15 |             0.38 |
-| CI.mean.0.95 |      1.08 |     0.29 |             0.74 |
-| var          |    114.42 |     8.08 |            52.93 |
-| std.dev      |     10.70 |     2.84 |             7.28 |
-| coef.var     |      0.20 |     0.07 |             0.27 |
-| skewness     |     -0.82 |    -0.33 |             0.93 |
-| skew.2SE     |     -3.30 |    -1.30 |             3.67 |
-| kurtosis     |      1.09 |     0.37 |             1.16 |
-| kurt.2SE     |      2.19 |     0.73 |             2.30 |
-| normtest.W   |      0.96 |     0.99 |             0.95 |
-| normtest.p   |      0.00 |     0.01 |             0.00 |
+|              | Pct_Leave | Mean.Age | UniQualification | NoQualification |   Fluent |
+|--------------+-----------+----------+------------------+-----------------+----------|
+| nbr.val      |    382.00 |   370.00 |           370.00 |          370.00 |   370.00 |
+| nbr.null     |      0.00 |     0.00 |             0.00 |            0.00 |     0.00 |
+| nbr.na       |      0.00 |    12.00 |            12.00 |           12.00 |    12.00 |
+| min          |      4.09 |    30.93 |            14.00 |           10.00 |    59.00 |
+| max          |     75.56 |    47.69 |            54.00 |           36.00 |    99.00 |
+| range        |     71.47 |    16.75 |            40.00 |           26.00 |    40.00 |
+| sum          |  20241.80 | 14918.74 |          9873.00 |         8504.00 | 34643.00 |
+| median       |     54.27 |    40.39 |            26.00 |           23.00 |    96.00 |
+| mean         |     52.99 |    40.32 |            26.68 |           22.98 |    93.63 |
+| SE.mean      |      0.55 |     0.15 |             0.38 |            0.26 |     0.34 |
+| CI.mean.0.95 |      1.08 |     0.29 |             0.74 |            0.52 |     0.67 |
+| var          |    114.42 |     8.08 |            52.93 |           25.61 |    43.57 |
+| std.dev      |     10.70 |     2.84 |             7.28 |            5.06 |     6.60 |
+| coef.var     |      0.20 |     0.07 |             0.27 |            0.22 |     0.07 |
+| skewness     |     -0.82 |    -0.33 |             0.93 |            0.16 |    -2.20 |
+| skew.2SE     |     -3.30 |    -1.30 |             3.67 |            0.61 |    -8.68 |
+| kurtosis     |      1.09 |     0.37 |             1.16 |           -0.46 |     5.60 |
+| kurt.2SE     |      2.19 |     0.73 |             2.30 |           -0.90 |    11.07 |
+| normtest.W   |      0.96 |     0.99 |             0.95 |            0.99 |     0.75 |
+| normtest.p   |      0.00 |     0.01 |             0.00 |            0.01 |     0.00 |
 
-#+BEGIN_SRC R :results graphics :file "./pictures/uniQualDis.png"
+
+Figure ref:fig-disUni shows that most of the localities have a positively skewed percentage of the population holding a university degree.
+
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/disUni.png"
   ggplot(brexit,aes(UniQualification))+
     geom_histogram(aes(y = ..density..))+
     geom_density()+
     labs( x = "% of population holding university qualification", y = "Density")
 #+END_SRC
 
-#+NAME: graphic1
-#+CAPTION: Hello
+#+caption: Histogram and density function (using gaussian kernel density estimation) of percentage of the population holding a university degree in each locality label:fig-disUni
+#+name: fig-disUni
 #+RESULTS:
-[[file:./pictures/uniQualDis.png]]
+[[file:./pictures/disUni.png]]
 
-#+BEGIN_SRC R :results graphics :file "./pictures/ageDis.png"
-  ggplot(brexit,aes(Mean.Age))+
-    geom_histogram(aes(y = ..density..))+
-    geom_density()+
-    labs( x = "Mean age", y = "Density")
-#+END_SRC
 
-#+RESULTS:
-[[file:./pictures/ageDis.png]]
+As discussed earlier, the percentage of unqualified population in each locality is near normally distributed (fig. ref:fig-disNoQual).
 
-#+BEGIN_SRC R :results graphics :file "./pictures/fluentDis.png"
-  ggplot(brexit,aes(Fluent))+
-    geom_histogram(aes(y = ..density..))+
-    geom_density()+
-    labs( x = "% of population fluent in English", y = "Density")
-
-#+END_SRC
-
-#+RESULTS:
-[[file:./pictures/fluentDis.png]]
-
-#+BEGIN_SRC R  :results graphics :file "./pictures/leavePctDis.png"
-  ggplot(brexit,aes(Pct_Leave))+
-    geom_histogram(aes(y = ..density..))+
-    geom_density()+
-    labs( x = "% that voted to leave at Brexit", y = "Density")
-#+END_SRC
-
-#+RESULTS:
-[[file:./pictures/leavePctDis.png]]
-
-#+BEGIN_SRC R  :results graphics :file "./pictures/NoQualification.png"
+#+BEGIN_SRC R :exports results  :results graphics :file "./pictures/disNoQual.png"
   ggplot(brexit,aes(NoQualification))+
     geom_histogram(aes(y = ..density..))+
     geom_density()+
     labs( x = "% of population without qualification", y = "Density")
 #+END_SRC
 
+#+caption: Histogram and density function (using gaussian kernel density estimation) of percentage of the population holding no qualificaiton in each locality label:fig-disNoQual
+#+name: fig-disNoQual
 #+RESULTS:
-[[file:./pictures/NoQualification.png]]
+[[file:./pictures/disNoQual.png]]
 
-* TODO Bivariate description (5 pages max., 2 pt)[3/3]
+Figure ref:fig-disAge shows that most of the population is around 40 years old with slightly more older than younger people across each locality.
+
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/disAge.png"
+  ggplot(brexit,aes(Mean.Age))+
+    geom_histogram(aes(y = ..density..))+
+    geom_density()+
+    labs( x = "Mean age", y = "Density")
+#+END_SRC
+
+#+caption: Histogram and density function (using gaussian kernel density estimation) of the mean age in each locality label:fig-disAge
+#+name: fig-disAge
+#+RESULTS:
+[[file:./pictures/disAge.png]]
+
+A very strongly negatively skewed distribution (fig. ref:fig-disFluent) shows that most people living in each locality have a high level of English. But there are still some localities with poor fluency.
+
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/disFluent.png"
+  ggplot(brexit,aes(Fluent))+
+    geom_histogram(aes(y = ..density..))+
+    geom_density()+
+    labs( x = "% of population fluent in English", y = "Density")
+#+END_SRC
+
+#+caption: Histogram and density function (using gaussian kernel density estimation) of mean English fluency in each locality label:fig-disFluent
+#+name: fig-disFluent
+#+RESULTS:
+[[file:./pictures/disFluent.png]]
+
+Figure ref:fig-disLeave shows that most localities voted in average to leave the EU. However, it is important to remember that it is biased from the fact that Northern Ireland is counted as a single locality.
+
+#+BEGIN_SRC R :exports results  :results graphics :file "./pictures/disLeave.png"
+  ggplot(brexit,aes(Pct_Leave))+
+    geom_histogram(aes(y = ..density..))+
+    geom_density()+
+    labs( x = "% that voted to leave at Brexit", y = "Density")
+#+END_SRC
+
+#+caption: Histogram and density function (using gaussian kernel density estimation) of percentage of the population that voted to leave in each locality label:fig-disLeave
+#+name: fig-disLeave
+#+RESULTS:
+[[file:./pictures/disLeave.png]]
+
+
+* DONE Bivariate description (5 pages max., 2 pt)[3/3]
+  CLOSED: [2016-11-10 Thu 11:26]
 
  - [X] Both variables qualitative: Crossclassified table, tables with interesting conditional distributions, grouped or stacked barplots for those conditionals. Compare proportions in different groups.
  - [X] One qualitative, one quantitative: Compare the means, variances and CVs of the quantitative variable for each category of the other one. Compare histograms or boxplots of the quantitative variable for each category of the other one.
  - [X] Both quantitative: scatterplot, covariance, Pearson correlation coef., regression line of a target variable in terms of one/several explanatory variables.
+ 
+The bivariate description is split in 3 parts. First, all qualitative variables will be compared, followed by qualitative and quantitative, and only quantitative variables. This is to detect any interesting relationship or proportion to analyse later.
 
 ** Both qualitative 
 
-#+BEGIN_SRC R :results output code
+   The contingency table (Listing ref:list-conParLeave) shows the spread of local authorities for or against Brexit according to their winning party at EPE in 2014. It is no surprise that UKIP voters were strongly in favour of Brexit and then SNP in Scotland strongly against it. The Conservatives seem to be extremely split and Labour have more local authorities voting in favour of Brexit, whether this was significant is discussed [[infLabour][later]].
+
+#+BEGIN_SRC R :exports results :results output code
   CrossTable(brexit$Won.Parliament,brexit$Leave)
 #+END_SRC
 
+#+caption: Contingency table of winning party of EPE and how people voted at Brexit. The cell content is described below. label:list-conParLeave
+#+name: list-conParLeave
 #+RESULTS:
 #+BEGIN_SRC R
 
@@ -274,54 +371,50 @@ brexit$Won.Parliament |        No |       Yes | Row Total |
 ----------------------|-----------|-----------|-----------|
 #+END_SRC
 
+Figure ref:fig-barEpeLeave shows that most of the "Yes" voting localities were also voting "UKIP" at last EPE. This is also shown in lis. ref:list-conParLeave.
 
-
-#+BEGIN_SRC R :exports results :results output raw
-  ascii(ftable(table(brexit$Won.Parliament,brexit$Leave)))
-
-#+END_SRC
-
-#+RESULTS:
-|      |   | No | Yes |
-|------+---+----+-----|
-|      |   |    |     |
-| Con  |   | 43 |  41 |
-| Lab  |   | 46 |  54 |
-| LD   |   |  4 |   0 |
-| SNP  |   | 16 |   0 |
-| UKIP |   |  7 | 166 |
-
-#+BEGIN_SRC R :results graphics :file "./pictures/epeNoQualBar.png"
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/barEpeLeave.png"
   ggplot(na.omit(brexit),aes(Leave))+
     geom_bar(aes(fill = Won.Parliament),position="fill")+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 #+END_SRC
 
+#+caption: Stacked bar plot of the winning EPE party composition of "Yes" and "No" localities. label:fig-barEpeLeave
+#+name: fig-barEpeLeave
 #+RESULTS:
-[[file:./pictures/epeNoQualBar.png]]
+[[file:./pictures/barEpeLeave.png]]
  
-#+BEGIN_SRC R :results graphics :file "./pictures/epeRegionBar.png"
+Figure ref:fig-barEpeRegion shows the composition of the winning party at the 2014 EPE per region. London had the lowest UKIP vote and UKIP is replaced by the SNP in Scotland.
+
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/barEpeRegion.png"
   ggplot(na.omit(brexit),aes(Region))+
     geom_bar(aes(fill = Won.Parliament),position="fill")+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 #+END_SRC
 
+#+caption: Stacked bar plot of the winning EPE party composition of each region. label:fig-barEpeRegion
+#+name: fig-barEpeRegion
 #+RESULTS:
-[[file:./pictures/epeRegionBar.png]]
+[[file:./pictures/barEpeRegion.png]]
 
-#+BEGIN_SRC R :results graphics :file "./pictures/noQualRegionBar.png"
+Figure ref:fig-barRegionLeave shows that most of the localities in London voted to stay in the EU and all localities in Scotland voted to stay.
+
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/barRegionLeave.png"
   ggplot(na.omit(brexit),aes(Region))+
     geom_bar(aes(fill = Leave),position="fill")+
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 #+END_SRC
 
+#+caption: Stacked bar plot of number of proportion of localities voting to leave the EU for each region. label:fig-barRegionLeave
+#+name: fig-barRegionLeave
 #+RESULTS:
-[[file:./pictures/noQualRegionBar.png]]
+[[file:./pictures/barRegionLeave.png]]
 
 
 ** Qualitative and Quantitative
 
-#+BEGIN_SRC R :results graphics :file "./pictures/QualQuanMatrics.png"
+Figure ref:fig-QualQuanMatrics summarises the relationship between all qualitative and quantitative variables. The following deductions are statement which have not been tested for significance and should be taken lightly until tested. First of all we can see that the percentage voting to leave is lower in London and Scotland than any other region and actually the only one lower than 50%. The London population is younger, more qualified and less fluent in English than other regions. The localities voting "Yes" have a higher mean age, a lower level of qualification and a higher level of fluency. Younger localities seemed to vote "Labour" at least EPE, whereas higher educated localities voted "Conservative".
+#+BEGIN_SRC R :exports results :results graphics :file "./pictures/QualQuanMatrics.png"
 
   plotList <- list()
   for (i in 1:15) {
@@ -400,69 +493,43 @@ brexit$Won.Parliament |        No |       Yes | Row Total |
   pm
 #+END_SRC
 
+#+caption: Boxplot of each Region, Brexit outcome and winning EPE party against the percentage of "Leave", the mean age, % of population holding a university degree or no degree at all, and English fluency of each locality withing those 3 categories. The x axis labels can be deducted from previous plots. label:fig-QualQuanMatrics
+#+name: fig-QualQuanMatrics
 #+RESULTS:
 [[file:./pictures/QualQuanMatrics.png]]
 
 
+
 ** Both quantitative 
 
-#+BEGIN_SRC R :results graphics :file "./pictures/QuanMatrics.png"
+Figure ref:fig-QuanMatrics summarises the relationships between all the quantitative variables. The mean percentage of leave vote of each locality correlates strongly negatively (-0.77) with the percentage of the localities holding a university degree. The mean age of the locality correlates strongly positively (0.72) with the mean English fluency (the older the locality,  the more fluent). As expected the percentage of the locality holding a university degree correlates strongly negatively (-0.88) with the level of "unqualification". 
+
+#+BEGIN_SRC R :exports results  :results graphics :file "./pictures/QuanMatrics.png"
 ggscatmat(brexit,columns = c ("Pct_Leave","Mean.Age","Fluent","UniQualification","NoQualification"),alpha = 0.5)  
 #+END_SRC
 
+#+caption: Matrix of scatterplots, distribution function and correlation coefficients of quantitative variables. label:fig-QuanMatrics
+#+name: fig-QuanMatrics
 #+RESULTS:
 [[file:./pictures/QuanMatrics.png]]
 
-* TODO Inference (2 pages max., 1 pt)[4/4]
+
+* DONE Inference (2 pages max., 1 pt)[4/4]
+  CLOSED: [2016-11-10 Thu 12:35]
  - [X] Confidence interval for a difference of two proportion.
  - [X] Hypothesis testing for the equality of two proportions.
  - [X] Confidence interval for a difference of two means.
  - [X] Hypothesis testing for equality of two means.
 ** Proportions 
 
-*** What did Labour regions voted?
-    
-46 for No and 54 for Yes
-
-#+BEGIN_SRC R
-    SE_diffProp <- function(p1,p2,n1,n2){
-    return (sqrt((p1*(1-p1)/n1)+(p2*(1-p2)/n2)))
-    }
-  p1=0.46
-  n1=100
-  p2=0.54
-  n2=100
-
-  c(p2-p1-SE_diffProp(p1,p2,n1,n2),p2-p1+SE_diffProp(p1,p2,n1,n2))
-  c(p2-p1-1.96*SE_diffProp(p1,p2,n1,n2),p2-p1+1.96*SE_diffProp(p1,p2,n1,n2))
-#+END_SRC
-
-#+RESULTS:
-| -0.0581487198637758 |
-|   0.218148719863776 |
-
-#+BEGIN_SRC R
-  SE <- function(pbar,n){
-  return (sqrt(pbar*(1-pbar)/n))
-  }
-  c(0.46-1.96*SE(0.46,100),0.46+1.96*SE(0.46,100))
-#  c(0.54-1.96*SE(0.54,100),0.54+1.96*SE(0.54,100))
-#+END_SRC
-
-#+RESULTS:
-| 0.362314103372083 |
-| 0.557685896627917 |
-
-The proportions  are not independent as they come from the same population (number of people that voted Labour = 100)
-Their distribution is normal as there are not strongly skewed
-
-point estimate of difference between population:
-$$p_1-p_2 = 0.54 - 0.46 = 0.08 $$
-
 *** Did people from Conservative voted similarly to Labour
+    <<infLabour>>
 **** Confidence interval for a difference of two proportions
-proportion of no
-  #+BEGIN_SRC R
+     
+     The confidence interval of the difference of proportion of "No" voting between Labour and Conservative (95%), shown in list. ref:ciLabour, includes 0 and does not show a significant difference between the way the Conservative and Labour voted.
+
+  #+caption: Code for listing ref:ciLabour. /p1/, /p2/, /n1/ and /n2/ values were taken from listing ref:list-conParLeave.
+  #+BEGIN_SRC R :exports both :results output code
     SE_diffProp <- function(p1,p2,n1,n2){
       return (sqrt((p1*(1-p1)/n1)+(p2*(1-p2)/n2)))
     }
@@ -474,66 +541,66 @@ proportion of no
     c(p1-p2-1.96*SE_diffProp(p1,p2,n1,n2),p1-p2+1.96*SE_diffProp(p1,p2,n1,n2))
   #+END_SRC
 
+  #+caption: Confidence interval around the difference of proportion of "No" voting between Labour and Conservative (95%). label:ciLabour
+  #+name: ciLabour
   #+RESULTS:
-  | -0.0929033395669854 |
-  |   0.196712863376509 |
- #+BEGIN_SRC R
-    c(p1-p2-SE_diffProp(p1,p2,n1,n2),p1-p2+SE_diffProp(p1,p2,n1,n2))
- #+END_SRC
-
- #+RESULTS:
- | -0.021976922519599 |
- |  0.125786446329123 |
+  #+BEGIN_SRC R
+  [1] -0.09290334  0.19671286
+  #+END_SRC
 
 **** Hypothesis testing for the equality of two proportions
-  $H_0$: There is no difference between the way conservative and labour regions voted   
-  $H_1$: The way conservative and labour  regions voted is different
 
-Estimate of p if the null is true (pooled proportion)
-#+BEGIN_SRC R
+  - $H_0$: There is no difference between the way conservative and labour regions voted   
+  - $H_1$: The way conservative and labour  regions voted is different
+
+All values in table ref:tab-nullLabour are over 10 so the success-failure condition is satisfied. As all Brexit votes are independent between localities and parties, we can apply the normal model.
+
+#+caption: code for table ref:tab-nullLabour
+#+BEGIN_SRC R :exports both :results output raw
 pooled <- (p1*n1+p2*n2)/(n1+n2)
-#+END_SRC
-
-#+RESULTS:
-: 0.483695652173913
-
-#+BEGIN_SRC R :results output raw
 ascii(rbind(c("","No","Yes"),c("Con",pooled*n1,(1-pooled)*n1),c("Lab",pooled*n2,(1-pooled)*n2)))
 #+END_SRC
 
+#+caption: number of vote if $H_0$ was true. label:tab-nullLabour
+#+name: tab-nullLabour
 #+RESULTS:
 |     |               No |              Yes |
 | Con | 40.6304347826087 | 43.3695652173913 |
 | Lab | 48.3695652173913 | 51.6304347826087 |
 
-All values are  over 10 and the success-failure condition is satisfied, we can therefore apply the normal model.
 
 Calculate the point estimate of the difference of proportion of No voters
-#+BEGIN_SRC R :results output raw
+#+caption: Code for table ref:tab-hypLabour.
+#+BEGIN_SRC R :exports both :results output raw
 point = p1-p2
 SE = sqrt(pooled*(1-pooled)/n1+pooled*(1-pooled)/n2)
 null = 0
 Z = (point - null)/SE
 p_value = 2 * pnorm(abs(Z))
 
-ascii(rbind(c("Difference","SE","Z","$p_value$"),c(point,SE,Z,p_value)))
+ascii(rbind(c("Difference","SE","Z","$p_{value}$"),c(point,SE,Z,p_value)))
 #+END_SRC
 
+#+caption: Difference of mean proportion of Leave between Conservative and Labour, along with its standard error, z-score and the $p_{value}$. label:tab-hypLabour
+#+name: tab-hypLabour
 #+RESULTS:
-|         Difference |                 SE |                 Z |        $p_value$ |
+|         Difference |                 SE |                 Z |      $p_{value}$ |
 | 0.0519047619047618 | 0.0739619327412691 | 0.701776711086406 | 1.51718157532207 |
 
-As the p-value is larger than 0.05, we cannot reject the null hypothesis. That is, the difference of the proportion of no voters between Conservative and Labour regions could have happened by chance.
+As the p-value (table ref:tab-hypLabour) is larger than 0.05, we cannot reject the null hypothesis. That is, the difference of the proportion of no localities between Conservative and Labour parties could have happened by chance.
 
 ** Sample means
 
 *** Is there a significant difference between the mean percentage of uni qualification in yes and no?
-**** Confidence interval for a difference of two means
-     #+BEGIN_SRC R
-     boxplot(UniQualification~Leave,brexit)
-     #+END_SRC
 
-   #+BEGIN_SRC R :results output raw
+     The difference tested here is the difference the mean % of locality holding a university degree between "No" and "Yes" voting localities. This difference can be seen in figure ref:fig-QualQuanMatrics. 
+
+**** Confidence interval for a difference of two means
+
+     The confidence interval (listing ref:ciUni) does not include 0 and should therefore show a significant different between the mean percentage of uni qualification between "Yes" and "No" voting localities.
+
+   #+caption: Code for listing ref:ciUni
+   #+BEGIN_SRC R :exports both :results output code
      SEm <- function(sample1,sample2){
        sample1 <- sample1[!(is.na(sample1))]
        sample2 <- sample2[!(is.na(sample2))]
@@ -546,40 +613,52 @@ As the p-value is larger than 0.05, we cannot reject the null hypothesis. That i
 
      df <- min(c(length(x)-1,length(y)-1))
 
-
-     ascii(c(point-1.96*SEm(x,y),point+1.96*SEm(x,y)))
+     c(point-1.96*SEm(x,y),point+1.96*SEm(x,y))
    #+END_SRC
 
+   #+caption: Confidence interval around the difference of mean % of locality holding a university degree between "No" and "Yes" voting localities (95%). label:ciUni
+   #+name: ciUni
    #+RESULTS:
-   | 7.35 | 10.56 |
+   #+BEGIN_SRC R
+   [1]  7.351178 10.555299
+   #+END_SRC
 
 **** Hypothesis testing for equality of two means
-#+BEGIN_SRC R :results output code
-t.test(UniQualification~Leave,brexit,alternative="greater")
-#+END_SRC
 
-#+RESULTS:
-#+BEGIN_SRC R
+     A two sample t test was used and showed a significantly greater mean of university qualification in localities that voted "No" compared to "Yes" ($p_{value}$ less than 0.05 in listing ref:hypUni).
 
-	Welch Two Sample t-test
+     #+caption: Code for listing ref:hypUni
+     #+BEGIN_SRC R :exports both :results output code
+     t.test(UniQualification~Leave,brexit,alternative="greater")
+     #+END_SRC
 
-data:  UniQualification by Leave
-t = 10.954, df = 148.04, p-value < 2.2e-16
-alternative hypothesis: true difference in means is greater than 0
-95 percent confidence interval:
- 7.600305      Inf
-sample estimates:
- mean in group No mean in group Yes 
-         32.90265          23.94942
-#+END_SRC
+   #+caption: Two sample t-test for the equality of means label:hypUni
+   #+name: hypUni
+   #+RESULTS:
+   #+BEGIN_SRC R
 
-The p value is lower than 0.05, showing that the mean of UniQualification for No voters is significantly bigger than the one for Yes voters.
+     Welch Two Sample t-test
 
-* TODO Sampling (2 pages max., 1.5 pt)[2/2]
+   data:  UniQualification by Leave
+   t = 10.954, df = 148.04, p-value < 2.2e-16
+   alternative hypothesis: true difference in means is greater than 0
+   95 percent confidence interval:
+    7.600305      Inf
+   sample estimates:
+    mean in group No mean in group Yes 
+            32.90265          23.94942
+   #+END_SRC
+
+* DONE Sampling (2 pages max., 1.5 pt)[2/2]
+  CLOSED: [2016-11-10 Thu 13:19]
  - [X] Treat your data as the population of interest and take a stratified sample using as strata the categories of one of the qualitative variable and applying simple random sampling within each strata. You first need to decide the total sample size. Secondly, you need to allocate this total sample size in the strata. Comment on the common methods for sample allocation that exist in the literature. Select your preferred method (justify your decision) and obtain the sample size within each stratum.
  - [X] With the sample drawn in 7.1, estimate unbiasedly the population mean of a quantitative variable of interest. Estimate unbiasedly the population proportion of a qualitative variable. With the sample drawn in 7.1, estimate unbiasedly the means of a quantitative variable of interest for each stratum. Estimate unbiasedly the proportion of a qualitative variable for each stratum use random sample
-** % Leave 
-#+BEGIN_SRC R
+   
+
+   A stratified sample was taken (table ref:tab-stratSample) by randomly selecting 10% (rounded up) of the localities in each region. Although the default method for sampling allocation within each strata is simple random sampling without replacement. There exist other such as simple random sampling with replacement, Poisson sampling and systematic sampling cite:sampling.
+
+#+caption: Code to get a stratified sample (table ref:tab-stratSample) across regions (10% of localities of each Region).
+#+BEGIN_SRC R :exports both :results output raw
   sample.size <- brexit %>%
     group_by(Region)%>%
     summarise(ceiling(length(Region)/10))
@@ -589,15 +668,75 @@ The p value is lower than 0.05, showing that the mean of UniQualification for No
   brexit.sample <- brexit.sort[brexit.strata$ID_unit,]
 #+END_SRC
 
-#+BEGIN_SRC R :results output raw 
+#+caption: Stratified sample obtained label:tab-stratSample
+#+name: tab-stratSample
+#+RESULTS:
+| East                     | Peterborough                | 60.89 | 36.91632 |  25 |  20 |  84 | UKIP | Yes |
+| East                     | Cambridge                   | 26.15 | 35.56456 |  12 |  47 |  83 | Lab  | No  |
+| East                     | Braintree                   | 61.13 | 40.01403 |  23 |  22 |  97 | UKIP | Yes |
+| East                     | Uttlesford                  | 50.68 | 40.56175 |  18 |  32 |  97 | Con  | Yes |
+| East                     | Babergh                     | 54.19 | 43.11187 |  23 |  26 |  98 | UKIP | Yes |
+| East Midlands            | Rutland                     | 50.57 | 42.36702 |  18 |  33 |  98 | Con  | Yes |
+| East Midlands            | Bolsover                    | 70.83 | 40.96935 |  33 |  16 |  98 | Lab  | Yes |
+| East Midlands            | Erewash                     | 61.23 |  40.7713 |  26 |  21 |  99 | UKIP | Yes |
+| East Midlands            | High Peak                   | 50.55 | 41.06343 |  21 |  29 |  99 | UKIP | Yes |
+| London                   | Bexley                      | 62.95 | 38.81379 |  23 |  22 |  94 | UKIP | Yes |
+| London                   | Ealing                      |  39.6 | 35.43642 |  16 |  37 |  66 | Lab  | No  |
+| London                   | Merton                      | 37.06 |  36.2861 |  15 |  41 |  79 | Lab  | No  |
+| London                   | City of London, Westminster | 31.03 |      nil | nil | nil | nil | Con  | No  |
+| North East               | Hartlepool                  | 69.57 | 39.82945 |  31 |  18 |  99 | UKIP | Yes |
+| North East               | South Tyneside              | 62.05 |  41.1694 |  28 |  19 |  98 | Lab  | Yes |
+| North West               | Blackburn with Darwen       | 56.34 |  36.2338 |  29 |  20 |  87 | Lab  | Yes |
+| North West               | Allerdale                   | 58.65 | 43.12696 |  27 |  23 |  99 | Lab  | Yes |
+| North West               | Wigan                       |  63.9 | 39.63527 |  27 |  20 |  98 | Lab  | Yes |
+| North West               | Liverpool                   | 41.81 | 37.67293 |  29 |  22 |  94 | Lab  | No  |
+| Northern Ireland         | Northern Ireland            | 44.22 |      nil | nil | nil | nil | nil  | No  |
+| Scotland                 | Dumfries & Galloway         | 46.94 |     43.6 |  33 |  22 |  88 | Con  | No  |
+| Scotland                 | Fife                        | 41.41 |     40.8 |  26 |  24 |  89 | Lab  | No  |
+| Scotland                 | Stirling                    | 32.28 |     40.2 |  21 |  33 |  90 | SNP  | No  |
+| Scotland                 | Edinburgh, City of          | 25.56 |     38.5 |  17 |  41 |  89 | Lab  | No  |
+| South East               | Medway                      | 64.08 | 37.74181 |  23 |  19 |  95 | UKIP | Yes |
+| South East               | Windsor and Maidenhead      |  46.1 | 39.75173 |  16 |  38 |  93 | Con  | No  |
+| South East               | Hastings                    | 54.88 | 40.22524 |  25 |  21 |  96 | UKIP | Yes |
+| South East               | Rushmoor                    | 58.21 | 36.62632 |  19 |  25 |  89 | UKIP | Yes |
+| South East               | Swale                       | 62.46 | 39.60567 |  27 |  19 |  97 | UKIP | Yes |
+| South East               | Thanet                      | 63.85 | 41.93821 |  28 |  20 |  95 | UKIP | Yes |
+| South East               | Surrey Heath                | 50.98 | 40.18877 |  15 |  34 |  95 | Con  | Yes |
+| South West               | Wiltshire                   | 52.49 | 40.80416 |  19 |  29 |  97 | Con  | Yes |
+| South West               | Purbeck                     | 59.07 | 44.86952 |  22 |  26 |  99 | UKIP | Yes |
+| South West               | Stroud                      | 45.39 | 42.29323 |  18 |  33 |  98 | Con  | No  |
+| South West               | Sedgemoor                   |  61.2 | 42.40666 |  25 |  22 |  98 | UKIP | Yes |
+| Wales                    | Isle of Anglesey            | 50.94 | 43.35609 |  24 |  26 |  99 | UKIP | Yes |
+| Wales                    | Flintshire                  | 56.37 | 40.56977 |  24 |  22 |  98 | UKIP | Yes |
+| Wales                    | Powys                       | 53.74 | 43.93772 |  25 |  26 |  98 | UKIP | Yes |
+| West Midlands            | Bromsgrove                  | 55.37 | 42.64558 |  21 |  31 |  99 | UKIP | Yes |
+| West Midlands            | Worcester                   | 53.68 | 38.31818 |  21 |  28 |  95 | UKIP | Yes |
+| West Midlands            | Wyre Forest                 | 63.15 | 42.69188 |  28 |  22 |  98 | UKIP | Yes |
+| Yorkshire and The Humber | East Riding of Yorkshire    |  60.4 | 43.48781 |  23 |  26 |  98 | UKIP | Yes |
+| Yorkshire and The Humber | Richmondshire               | 56.78 | 39.98029 |  19 |  27 |  97 | Con  | Yes |
+| Yorkshire and The Humber | Selby                       | 59.17 | 40.88615 |  21 |  26 |  98 | UKIP | Yes |
+
+** % Leave 
+   
+
+The selected sample was able to accurately estimate the population mean (table ref:tab-stratCI).
+
+#+caption: Code for table ref:tab-stratCI
+#+BEGIN_SRC R :exports both :results output raw 
 ascii(cbind(rbind(c("mean","CI.mean.0.95"),stat.desc(brexit.sample$Pct_Leave)[c("mean","CI.mean.0.95")]),c("population mean",mean(brexit$Pct_Leave))))
 #+END_SRC
 
+#+caption: Mean percentage leave for the sample along with its confidence interval and the original population mean for comparison. label:tab-stratCI
+#+name: tab-stratCI
 #+RESULTS:
 |             mean |     CI.mean.0.95 |  population mean |
-| 54.7559090909091 | 3.14896488017232 | 52.9890052356021 |
+| 52.9068181818182 | 3.32707424576926 | 52.9890052356021 |
 
-#+BEGIN_SRC R :results output raw
+
+The same sample was able to able to determine the population mean with a maximum of 13.72 of confidence interval around the mean (95%) (see table ref:tab-stratByCI).
+
+#+caption: Code for table ref:tab-stratByCI
+#+BEGIN_SRC R :exports both :results output raw
   sem<-function(x){sd(x)/sqrt(length(x))}
   pctLeaveRegion <- cbind(aggregate(Pct_Leave~Region,brexit.sample,mean),
   1.96*aggregate(Pct_Leave~Region,brexit.sample,FUN=sem)[2],
@@ -606,88 +745,46 @@ ascii(cbind(rbind(c("mean","CI.mean.0.95"),stat.desc(brexit.sample$Pct_Leave)[c(
   ascii(pctLeaveRegion)
 #+END_SRC
 
+#+caption: Mean percentage leave for the sample along with its confidence interval and the original population mean for each region. label:tab-stratByCI
+#+name: tab-stratByCI
 #+RESULTS:
 |    | Region                   |  mean | CI.mean.0.95 | population mean |
 |----+--------------------------+-------+--------------+-----------------|
-|  1 | East                     | 61.60 |         7.95 |           56.96 |
-|  2 | East Midlands            | 61.71 |         6.25 |           59.57 |
-|  3 | London                   | 49.77 |        13.61 |           39.09 |
-|  4 | North East               | 57.73 |         7.09 |           59.48 |
-|  5 | North West               | 59.19 |         5.48 |           55.92 |
+|  1 | East                     | 50.61 |        12.61 |           56.96 |
+|  2 | East Midlands            | 58.30 |         9.56 |           59.57 |
+|  3 | London                   | 42.66 |        13.72 |           39.09 |
+|  4 | North East               | 65.81 |         7.37 |           59.48 |
+|  5 | North West               | 55.17 |         9.27 |           55.92 |
 |  6 | Northern Ireland         | 44.22 |              |           44.22 |
-|  7 | Scotland                 | 36.38 |         7.18 |           39.14 |
-|  8 | South East               | 49.40 |         4.05 |           52.17 |
-|  9 | South West               | 58.09 |         3.59 |           52.38 |
-| 10 | Wales                    | 52.35 |         4.50 |           53.35 |
-| 11 | West Midlands            | 61.58 |         9.86 |           60.31 |
-| 12 | Yorkshire and The Humber | 64.48 |         9.08 |           58.65 |
+|  7 | Scotland                 | 36.55 |         9.31 |           39.14 |
+|  8 | South East               | 57.22 |         5.13 |           52.17 |
+|  9 | South West               | 54.54 |         6.99 |           52.38 |
+| 10 | Wales                    | 53.68 |         3.07 |           53.35 |
+| 11 | West Midlands            | 57.40 |         5.72 |           60.31 |
+| 12 | Yorkshire and The Humber | 58.78 |         2.08 |           58.65 |
 
 ** Proportion of localities wanting to leave EU
-#+BEGIN_SRC R :results output code
-  CrossTable(brexit.sample$Won.Parliament,brexit.sample$Leave)
-#+END_SRC
 
-#+RESULTS:
-#+BEGIN_SRC R
+Table ref:tab-stratCI2 shows that the estimated mean was relatively accurate but has a higher confidence interval than for the percentage of leave due to the fact that this is a categorical data and therefore requires a bigger sample size for similar accuracy.   
 
- 
-   Cell Contents
-|-------------------------|
-|                       N |
-| Chi-square contribution |
-|           N / Row Total |
-|           N / Col Total |
-|         N / Table Total |
-|-------------------------|
-
- 
-Total Observations in Table:  43 
-
- 
-                             | brexit.sample$Leave 
-brexit.sample$Won.Parliament |        No |       Yes | Row Total | 
------------------------------|-----------|-----------|-----------|
-                         Con |         4 |         5 |         9 | 
-                             |     0.882 |     0.341 |           | 
-                             |     0.444 |     0.556 |     0.209 | 
-                             |     0.333 |     0.161 |           | 
-                             |     0.093 |     0.116 |           | 
------------------------------|-----------|-----------|-----------|
-                         Lab |         5 |         8 |        13 | 
-                             |     0.519 |     0.201 |           | 
-                             |     0.385 |     0.615 |     0.302 | 
-                             |     0.417 |     0.258 |           | 
-                             |     0.116 |     0.186 |           | 
------------------------------|-----------|-----------|-----------|
-                         SNP |         2 |         0 |         2 | 
-                             |     3.725 |     1.442 |           | 
-                             |     1.000 |     0.000 |     0.047 | 
-                             |     0.167 |     0.000 |           | 
-                             |     0.047 |     0.000 |           | 
------------------------------|-----------|-----------|-----------|
-                        UKIP |         1 |        18 |        19 | 
-                             |     3.491 |     1.351 |           | 
-                             |     0.053 |     0.947 |     0.442 | 
-                             |     0.083 |     0.581 |           | 
-                             |     0.023 |     0.419 |           | 
------------------------------|-----------|-----------|-----------|
-                Column Total |        12 |        31 |        43 | 
-                             |     0.279 |     0.721 |           | 
------------------------------|-----------|-----------|-----------|
-#+END_SRC
-
-#+BEGIN_SRC R :results output raw
+#+caption: Code for table ref:tab-stratCI2
+#+BEGIN_SRC R :exports both :results output raw
   p <- length(brexit.sample$Leave[brexit.sample$Leave=="Yes"])/length(brexit.sample$Leave)
   SE <- sqrt(p*(1-p)/length(brexit.sample$Leave))
   pop.mean <- length(brexit$Leave[brexit$Leave=="Yes"])/length(brexit$Leave)
   ascii(rbind(c("mean","CI.mean.0.95","population mean"),c(p,1.96*SE,pop.mean)))
 #+END_SRC
 
+#+caption: Mean proportion of localities wanting to leave the EU, along with its confidence interval and the original population mean for comparison. label:tab-stratCI2
+#+name: tab-stratCI2
 #+RESULTS:
-|              mean |      CI.mean.0.95 |  population mean |
-| 0.704545454545455 | 0.134812319104818 | 0.68848167539267 |
+|              mean |     CI.mean.0.95 |  population mean |
+| 0.727272727272727 | 0.13159599399245 | 0.68848167539267 |
 
-#+BEGIN_SRC R :results output code
+Listing ref:tab-stratByCI2 shows that the mean proportion estimation is inaccurate. This is because the sample size of each region is too small to provide meaningful proportion statistics.
+
+#+caption: Code for listing ref:tab-stratByCI2
+#+BEGIN_SRC R :exports both :results output code
     SE <- function(pbar,n){
     return (sqrt(pbar*(1-pbar)/n))
     }
@@ -699,28 +796,34 @@ brexit.sample$Won.Parliament |        No |       Yes | Row Total |
   leaveRegion
 #+END_SRC
 
+#+caption: Mean proportion of localities wanting to leave the EU, along with its confidence interval and the original population mean per region. label:tab-stratByCI2
+#+name: tab-stratByCI2
 #+RESULTS:
 #+BEGIN_SRC R
                               mean CI.mean.0.95 population mean
-East                     1.0000000    0.0000000       0.8936170
+East                     0.8000000    0.3506155       0.8936170
 East Midlands            1.0000000    0.0000000       0.9500000
 London                   0.2500000    0.4243524       0.1515152
 North East               1.0000000    0.0000000       0.9166667
-North West               1.0000000    0.0000000       0.8205128
+North West               0.7500000    0.4243524       0.8205128
 Northern Ireland         0.0000000    0.0000000       0.0000000
 Scotland                 0.0000000    0.0000000       0.0000000
-South East               0.4285714    0.3666061       0.6417910
-South West               1.0000000    0.0000000       0.7368421
-Wales                    0.6666667    0.5334444       0.7727273
+South East               0.8571429    0.2592296       0.6417910
+South West               0.7500000    0.4243524       0.7368421
+Wales                    1.0000000    0.0000000       0.7727273
 West Midlands            1.0000000    0.0000000       0.9666667
 Yorkshire and The Humber 1.0000000    0.0000000       0.8571429
 #+END_SRC
 
-* TODO Model selection (1 page max., 1 pt)[0/3]
- - [ ] Select the best probability distribution for at least one variable of interest. You might need to take some transformation (e.g. log).
- - [ ] Estimate the parameters of the distribution by the method of moments or by maximum likelihood.
+* TODO Model selection (1 page max., 1 pt)[2/2]
+<<model selection>>
+ - [X] Select the best probability distribution for at least one variable of interest. You might need to take some transformation (e.g. log).
+ - [X] Estimate the parameters of the distribution by the method of moments or by maximum likelihood.
+ 
+The variable with the best probability distribution was /NoQualification/ as its  distribution was the most normal of all and did not require any transformation (see table ref:tab-statQuan). The parameters of its distribution ($\alpha$ and $\beta$, see listing ref:lis-betaParam) were calculated using gmm::gmm (method of moments) over a beta distribution (values ranging from 0 to 1).
 
-#+BEGIN_SRC R
+#+caption: Code for listing ref:lis-betaParam.
+#+BEGIN_SRC R :exports both :results output code
   g <- function(th,x) {
     t1 <- th[1]
     t2 <- th[2]
@@ -731,28 +834,60 @@ Yorkshire and The Humber 1.0000000    0.0000000       0.8571429
     f <- cbind(m1,m2)
     return(f)
   }
-  z = (brexit$NoQualification-min(brexit$NoQualification,na.rm=TRUE))/(max(brexit$NoQualification,na.rm=TRUE)-min(brexit$NoQualification,na.rm=TRUE))
+  z = (brexit$NoQualification-min(brexit$NoQualification,na.rm=TRUE))/
+    (max(brexit$NoQualification,na.rm=TRUE)-min(brexit$NoQualification,na.rm=TRUE))
   z <- z[!(is.na(z))]
   gmm(g=g,x=z,c(alpha=0.1,beta=0.1))
+#+END_SRC
+
+#+caption: Parameters of beta transformed distribution of /NoQualification/ using the method of moments. label:lis-betaParam
+#+name: lis-betaParam
+#+RESULTS:
+#+BEGIN_SRC R
+Method
+ twoStep 
+
+Objective function value:  6.339951e-10 
+
+ alpha    beta  
+2.8053  2.8126  
+
+Convergence code =  0
+#+END_SRC
+
+As shown on figure ref:fig-betaDis, the parameters of the distribution are correct.
+
+#+caption: Code used to create figure ref:fig-betaDis.
+#+BEGIN_SRC R :exports both :results output graphics :file "./pictures/betaDis.png"
   x <- seq(0, 1, length = 100)
   hist(z,xlim=c(0,1),probability=TRUE)
   curve(dbeta(x,2.8053,2.8126),add=TRUE)
 #+END_SRC
 
-* TODO Conclusions (2 pages max., 1.5 pt)[0/2]
- - [ ] Summarize the most important conclusions of your analyses.
- - [ ] Mention limitations and possible extensions of this project.
+#+caption: Histogram of transformed NoQualification to range [0,1] with beta curve using the previously calculated parameters. label:fig-betaDis
+#+name: fig-betaDis
+#+RESULTS:
+[[file:./pictures/betaDis.png]]
 
-* References (if needed)
-  List of documents referred to in the text of the report.
-  
+* DONE Conclusions (2 pages max., 1.5 pt)[2/2]
+  CLOSED: [2016-11-10 Thu 14:27]
+ - [X] Summarize the most important conclusions of your analyses.
+ - [X] Mention limitations and possible extensions of this project.
+ 
+Summary:
+- Labour and Conservative localities seem to have voted similarly.
+- "Yes" voting localities have a lower proportion of people that have a university degree, extended to a linear model.
+- Stratified sample performed better for quantitative than qualitative variable.
+- The beta distribution was a good fit to the normal distribution of /NoQualification/
 
+Future work:
+- The analysis between Labour and Conservative only looked at a boolean ("Yes" and "No"). Using the percentages instead will allow to have a better idea how each have voted comparatively to each other.
+- "Yes" voters have less university degrees, but we don't know by how much. A linear model would allow to calculate this.
+- Stratified should be compared to other sampling methods to check how effective it was.
 
-* IMPORTANT REMARKS:
-- Free statistical analysis: Additional statistical analyses selected by the student that do not fit in the general structure listed above might be included. The maximum pages for this additional material will be 3. This material will be evaluated with a maximum of 2 additional points only if it is reasonable, correct and related with this subject.
-- All tables, plots and statistical procedures must be clearly described (what are you doing, what is it in the x and y axis, etc) and conclusions (interesting or useful information) must be drawn from all of them. Tables and figures without any comment must be removed from the project report. If new plots that are different from those studied in class are included, they must be very clearly explained.
-- These projects will be carefully read and graded. The redaction of the report must be original (do not copy any paragraph from any source unless you explicitly acknowledged it by including a reference to the original source). English expression must be understandable and clean of typos or grammar errors (e.g. –s in third person singular).
-- Do not include the whole list of data in the Project report.
+* References
+<<bibliography link>>
 
-
+bibliographystyle:unsrt
+bibliography:analysis.bib
 

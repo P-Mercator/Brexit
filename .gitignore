@@ -5,6 +5,7 @@ auto
 *.tex
 *.html
 .DS_Store
+analyis.bbl
 .Rhistory
 dataSubmission
 dataSubmission.*
