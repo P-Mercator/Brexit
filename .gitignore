@@ -1,5 +1,4 @@
 _minted-analyis/
-data
 auto
 *.pdf
 *.tex
@@ -13,7 +12,6 @@ analyis.bbl
 dataSubmission
 dataSubmission.*
 auto
-pictures
 *.aux
 *.log
 *.out

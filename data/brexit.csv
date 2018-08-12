@@ -1,0 +1,383 @@
+Region,Area,Pct_Leave,Mean.Age,NoQualification,UniQualification,Fluent,Won.Parliament
+East,Peterborough,60.89,36.91632,25,20,84,UKIP
+East,Luton,56.55,34.75405,24,22,79,Lab
+East,Southend-on-Sea,58.08,40.18441,25,22,95,UKIP
+East,Thurrock,72.28,36.83433,26,17,94,UKIP
+East,Bedford,51.78,38.91516,20,28,89,UKIP
+East,Central Bedfordshire,56.13,39.64802,19,27,97,UKIP
+East,Cambridge,26.15,35.56456,12,47,83,Lab
+East,East Cambridgeshire,50.92,40.19086,21,29,96,NA
+East,Fenland,71.39,42.06939,31,15,94,UKIP
+East,Huntingdonshire,54.24,39.91671,19,28,96,UKIP
+East,South Cambridgeshire,39.77,40.08003,15,40,95,NA
+East,Basildon,68.62,39.06526,27,19,97,UKIP
+East,Braintree,61.13,40.01403,23,22,97,UKIP
+East,Brentwood,59.15,41.63916,19,31,97,UKIP
+East,Castle Point,72.7,43.18186,30,15,99,UKIP
+East,Chelmsford,52.83,40.05206,19,29,97,UKIP
+East,Colchester,53.6,38.89722,19,27,94,UKIP
+East,Epping Forest,62.69,41.08944,24,25,96,UKIP
+East,Harlow,68.1,38.20165,26,18,94,UKIP
+East,Maldon,62.58,43.02382,23,24,99,UKIP
+East,Rochford,66.61,42.32705,24,20,99,UKIP
+East,Tendring,69.5,45.70375,34,16,99,UKIP
+East,Uttlesford,50.68,40.56175,18,32,97,Con
+East,Broxbourne,66.26,39.12514,26,19,94,UKIP
+East,Dacorum,50.67,39.41183,19,31,96,Con
+East,Hertsmere,50.84,39.35615,19,31,93,Con
+East,North Hertfordshire,45.63,40.18275,18,34,96,NA
+East,Three Rivers,51.27,40.02636,18,34,95,Con
+East,Watford,50.27,36.45739,17,32,86,Lab
+East,Breckland,64.22,42.63489,28,19,95,UKIP
+East,Broadland,54.37,43.90215,23,23,99,UKIP
+East,Great Yarmouth,71.5,42.08533,33,14,96,UKIP
+East,King's Lynn and West Norfolk,66.4,43.47342,29,19,96,UKIP
+East,North Norfolk,58.91,47.48964,27,22,99,UKIP
+East,Norwich,43.76,37.41697,23,28,92,Lab
+East,South Norfolk,51.69,43.00516,23,27,98,Con
+East,Babergh,54.19,43.11187,23,26,98,UKIP
+East,Forest Heath,64.97,38.75003,26,19,95,UKIP
+East,Ipswich,58.26,38.02066,26,21,92,UKIP
+East,Mid Suffolk,55.23,42.43697,22,26,99,UKIP
+East,St Edmundsbury,56.62,40.95639,22,25,96,UKIP
+East,Suffolk Coastal,53,44.15615,21,29,98,Con
+East,Waveney,62.9,43.85141,30,18,98,UKIP
+East,St Albans,37.29,NA,NA,NA,NA,Con
+East,Welwyn Hatfield,52.99,NA,NA,NA,NA,Con
+East,East Hertfordshire,50.36,NA,NA,NA,NA,NA
+East,Stevenage,59.25,NA,NA,NA,NA,UKIP
+East Midlands,Derby,57.22,37.61231,24,24,90,Lab
+East Midlands,Leicester,48.92,34.80327,29,21,72,Lab
+East Midlands,Rutland,50.57,42.36702,18,33,98,Con
+East Midlands,Nottingham,50.84,34.78955,26,22,87,Lab
+East Midlands,Amber Valley,60.28,41.84085,27,23,99,UKIP
+East Midlands,Bolsover,70.83,40.96935,33,16,98,Lab
+East Midlands,Chesterfield,60.04,41.40656,28,21,98,Lab
+East Midlands,Derbyshire Dales,51.56,44.53302,22,33,99,Con
+East Midlands,Erewash,61.23,40.7713,26,21,99,UKIP
+East Midlands,High Peak,50.55,41.06343,21,29,99,UKIP
+East Midlands,North East Derbyshire,62.78,43.2683,27,22,99,UKIP
+East Midlands,South Derbyshire,60.35,39.50237,22,26,98,UKIP
+East Midlands,Blaby,59.47,40.85574,22,25,97,UKIP
+East Midlands,Charnwood,53.81,39.33349,21,27,94,UKIP
+East Midlands,Harborough,50.75,41.55869,18,32,98,Con
+East Midlands,Hinckley and Bosworth,60.33,41.71157,24,24,98,UKIP
+East Midlands,Melton,58.11,41.72531,21,26,98,Con
+East Midlands,North West Leicestershire,60.7,40.80034,26,24,98,UKIP
+East Midlands,Oadby and Wigston,54.58,41.00908,23,25,92,UKIP
+East Midlands,Boston,75.56,41.51045,33,15,87,UKIP
+East Midlands,East Lindsey,70.65,45.82035,33,18,99,UKIP
+East Midlands,Lincoln,56.94,37.35352,22,21,94,UKIP
+East Midlands,North Kesteven,62.26,42.68263,22,25,98,UKIP
+East Midlands,South Holland,73.59,43.40679,31,16,93,UKIP
+East Midlands,South Kesteven,59.93,41.83578,22,26,97,UKIP
+East Midlands,West Lindsey,61.82,43.13601,23,25,99,UKIP
+East Midlands,Corby,64.25,37.4638,28,15,91,Lab
+East Midlands,Daventry,58.6,40.91335,19,29,97,Con
+East Midlands,East Northamptonshire,58.76,40.37093,22,24,98,UKIP
+East Midlands,Kettering,60.99,39.45296,23,23,96,UKIP
+East Midlands,Northampton,58.38,37.11433,23,24,90,UKIP
+East Midlands,South Northamptonshire,54.34,41.08237,17,31,99,UKIP
+East Midlands,Wellingborough,62.42,39.6378,26,20,92,UKIP
+East Midlands,Ashfield,69.84,39.95502,31,15,98,UKIP
+East Midlands,Bassetlaw,67.83,41.5337,28,20,97,Lab
+East Midlands,Broxtowe,54.65,41.35045,23,28,96,UKIP
+East Midlands,Gedling,55.55,41.42488,24,25,98,UKIP
+East Midlands,Mansfield,70.86,40.23833,30,16,96,UKIP
+East Midlands,Newark and Sherwood,60.39,41.63494,25,24,98,UKIP
+East Midlands,Rushcliffe,42.45,41.24096,16,39,97,Con
+London,City of London,24.71,NA,NA,NA,NA,Con
+London,Barking and Dagenham,62.44,33.43094,28,21,81,Lab
+London,Barnet,37.77,36.81513,16,40,77,Con
+London,Bexley,62.95,38.81379,23,22,94,UKIP
+London,Brent,40.26,35.01982,19,33,63,Lab
+London,Bromley,49.35,39.89845,18,33,94,Con
+London,Camden,25.06,35.70132,13,51,77,Lab
+London,Croydon,45.71,36.35381,18,32,86,Lab
+London,Ealing,39.6,35.43642,16,37,66,Lab
+London,Enfield,44.18,35.8829,23,29,77,Lab
+London,Greenwich,44.41,34.56843,21,33,83,Lab
+London,Hackney,21.52,32.35318,20,42,76,Lab
+London,Hammersmith and Fulham,29.98,34.73397,13,50,77,Lab
+London,Haringey,24.43,34.16248,18,41,70,Lab
+London,Harrow,45.37,37.55818,17,37,72,Lab
+London,Havering,69.66,40.35905,26,19,95,UKIP
+London,Hillingdon,56.37,36.37698,19,28,81,Lab
+London,Hounslow,48.94,35.24354,17,35,71,Lab
+London,Islington,24.78,34.51397,17,48,80,Lab
+London,Kensington and Chelsea,31.31,37.79165,10,53,72,Con
+London,Kingston upon Thames,38.39,37.01358,13,41,84,Con
+London,Lambeth,21.38,33.7,14,47,80,Lab
+London,Lewisham,30.14,34.55285,18,38,84,Lab
+London,Merton,37.06,36.2861,15,41,79,Lab
+London,Newham,47.16,31.26153,21,30,59,Lab
+London,Redbridge,46.03,35.63186,18,34,75,Lab
+London,Richmond upon Thames,30.71,38.26487,11,53,90,Con
+London,Southwark,27.19,33.72556,16,43,80,Lab
+London,Sutton,53.72,38.33777,19,30,90,UKIP
+London,Tower Hamlets,32.54,30.93429,20,41,66,Lab
+London,Waltham Forest,40.9,34.44874,21,30,74,Lab
+London,Wandsworth,24.97,34.47673,12,54,83,Con
+London,"City of London, Westminster",31.03,NA,NA,NA,NA,Con
+North East,Hartlepool,69.57,39.82945,31,18,99,UKIP
+North East,Middlesbrough,65.48,37.78762,30,19,95,UKIP
+North East,Redcar and Cleveland,66.19,41.51965,28,19,99,UKIP
+North East,Stockton-on-Tees,61.73,39.07663,24,23,98,UKIP
+North East,Darlington,56.18,40.2098,25,24,97,UKIP
+North East,County Durham,57.55,40.97188,28,21,99,Lab
+North East,Northumberland,54.11,NA,NA,NA,NA,Lab
+North East,Newcastle upon Tyne,49.3,36.90711,24,27,91,Lab
+North East,North Tyneside,53.4,40.94288,24,25,98,Lab
+North East,South Tyneside,62.05,41.1694,28,19,98,Lab
+North East,Sunderland,61.34,40.40563,29,18,97,Lab
+North East,Gateshead,56.85,NA,NA,NA,NA,Lab
+North West,Halton,57.42,38.8502,27,18,99,Lab
+North West,Warrington,54.27,39.49586,21,27,97,Lab
+North West,Blackburn with Darwen,56.34,36.2338,29,20,87,Lab
+North West,Blackpool,67.46,41.33272,31,16,97,UKIP
+North West,Cheshire East,51.18,41.96989,20,32,97,Con
+North West,Cheshire West and Chester,50.68,41.33889,21,29,98,UKIP
+North West,Allerdale,58.65,43.12696,27,23,99,Lab
+North West,Barrow-in-Furness,60.62,41.34733,25,19,99,Lab
+North West,Carlisle,60.14,41.34703,25,22,97,UKIP
+North West,Copeland,62,42.06713,27,21,99,Lab
+North West,Eden,53.32,44.12301,23,27,98,Con
+North West,South Lakeland,47.14,45.43461,19,33,98,LD
+North West,Burnley,66.61,39.35515,29,19,94,Lab
+North West,Chorley,56.83,40.53112,21,28,98,Lab
+North West,Fylde,56.96,44.93044,21,30,98,Con
+North West,Hyndburn,66.19,38.72979,28,19,94,UKIP
+North West,Lancaster,51.08,40.17263,21,27,96,UKIP
+North West,Pendle,63.15,38.90371,28,20,91,Lab
+North West,Preston,53.31,36.92838,23,25,90,Lab
+North West,Ribble Valley,56.39,42.52716,18,34,99,Con
+North West,Rossendale,60.68,39.64951,24,25,97,UKIP
+North West,South Ribble,58.56,40.82741,20,26,99,UKIP
+North West,West Lancashire,55.31,41.20287,23,25,98,Lab
+North West,Wyre,63.77,44.72554,26,23,99,UKIP
+North West,Bolton,58.29,38.4274,26,22,92,Lab
+North West,Bury,54.12,39.21553,23,26,95,Lab
+North West,Manchester,39.64,33.21533,23,29,83,Lab
+North West,Oldham,60.86,37.4315,30,19,89,Lab
+North West,Rochdale,60.07,37.91879,29,19,92,Lab
+North West,Salford,56.81,37.35378,27,22,93,Lab
+North West,Stockport,47.67,40.76601,21,30,97,UKIP
+North West,Tameside,61.14,39.10278,28,18,95,Lab
+North West,Trafford,42.31,39.28137,19,34,94,Lab
+North West,Wigan,63.9,39.63527,27,20,98,Lab
+North West,Knowsley,51.56,39.10665,35,15,99,Lab
+North West,Liverpool,41.81,37.67293,29,22,94,Lab
+North West,St. Helens,58.02,40.7216,28,21,99,Lab
+North West,Sefton,48.13,42.53627,25,24,98,Lab
+North West,Wirral,48.3,41.35912,23,25,98,Lab
+Northern Ireland,Northern Ireland,44.22,NA,NA,NA,NA,NA
+Scotland,Clackmannanshire,42.22,40.3,29,22,89,SNP
+Scotland,Dumfries & Galloway,46.94,43.6,33,22,88,Con
+Scotland,East Ayrshire,41.4,40.9,34,18,88,SNP
+Scotland,East Lothian,35.4,41,25,27,91,Lab
+Scotland,East Renfrewshire,25.68,41,19,35,93,Con
+Scotland,Eilean Siar,44.76,43.7,30,26,90,SNP
+Scotland,Falkirk,43.24,40.1,27,20,89,SNP
+Scotland,Fife,41.41,40.8,26,24,89,Lab
+Scotland,Highland,44.05,41.9,25,26,90,SNP
+Scotland,Inverclyde,36.2,41.5,33,20,91,Lab
+Scotland,Midlothian,37.94,40.4,29,21,90,Lab
+Scotland,Moray,49.87,41.2,27,23,87,SNP
+Scotland,North Ayrshire,43.12,41.6,31,20,90,SNP
+Scotland,Orkney Islands,36.84,42.6,28,27,87,LD
+Scotland,Perth & Kinross,38.91,42.6,23,30,90,SNP
+Scotland,Scottish Borders,41.53,43.5,28,27,89,Con
+Scotland,Shetland Islands,43.49,40.1,24,27,85,LD
+Scotland,South Ayrshire,41.04,43.5,29,25,91,Con
+Scotland,South Lanarkshire,36.92,40.7,29,22,90,Lab
+Scotland,Stirling,32.28,40.2,21,33,90,SNP
+Scotland,Aberdeen City,38.9,38.7,20,33,87,SNP
+Scotland,Aberdeenshire,44.99,40.4,24,27,86,SNP
+Scotland,Argyll & Bute,39.43,43.9,25,29,91,SNP
+Scotland,"Edinburgh, City of",25.56,38.5,17,41,89,Lab
+Scotland,Renfrewshire,35.19,40.6,28,23,90,Lab
+Scotland,West Dunbartonshire,38.01,40.3,33,17,90,Lab
+Scotland,West Lothian,41.75,38.2,26,21,89,SNP
+Scotland,Angus,44.74,42.4,27,24,89,SNP
+Scotland,Dundee City,40.22,39.3,27,25,88,SNP
+Scotland,North Lanarkshire,38.34,39,33,17,90,Lab
+Scotland,East Dunbartonshire,28.6,42.2,20,35,93,SNP
+Scotland,Glasgow City,33.41,38,32,26,86,Lab
+South East,Medway,64.08,37.74181,23,19,95,UKIP
+South East,Bracknell Forest,53.94,37.42058,16,30,94,UKIP
+South East,West Berkshire,48.22,39.43545,17,32,97,Con
+South East,Reading,41.97,35.344,17,35,85,Lab
+South East,Slough,54.33,33.4753,20,26,73,Lab
+South East,Windsor and Maidenhead,46.1,39.75173,16,38,93,Con
+South East,Wokingham,43.31,39.35979,13,40,95,Con
+South East,Milton Keynes,51.41,36.05791,18,28,90,UKIP
+South East,Brighton and Hove,31.38,37.44373,16,37,92,Lab
+South East,Portsmouth,58.08,36.4946,21,24,93,UKIP
+South East,Southampton,53.8,36.11545,21,25,88,UKIP
+South East,Isle of Wight,61.95,44.44724,24,23,98,UKIP
+South East,Aylesbury Vale,50.5,39.11852,17,32,95,UKIP
+South East,Chiltern,44.98,41.62361,15,41,96,Con
+South East,South Bucks,50.7,41.75097,17,37,94,Con
+South East,Wycombe,48.03,38.8716,17,34,92,Con
+South East,Eastbourne,57.33,42.83426,23,24,94,UKIP
+South East,Hastings,54.88,40.22524,25,21,96,UKIP
+South East,Lewes,47.93,43.7352,21,29,97,UKIP
+South East,Rother,58.53,47.16723,25,25,98,UKIP
+South East,Wealden,54.5,43.98471,20,29,98,UKIP
+South East,Basingstoke and Deane,51.9,38.68223,17,30,95,Con
+South East,East Hampshire,49.48,42.02593,17,34,97,Con
+South East,Eastleigh,52.45,40.10923,18,28,97,UKIP
+South East,Fareham,55.1,42.57809,18,30,98,Con
+South East,Gosport,63.86,39.76149,22,21,98,UKIP
+South East,Hart,47.6,40.00172,14,37,97,Con
+South East,Havant,62.36,42.27235,25,22,99,UKIP
+South East,New Forest,57.76,45.20522,21,27,98,UKIP
+South East,Rushmoor,58.21,36.62632,19,25,89,UKIP
+South East,Test Valley,51.94,41.39841,18,31,97,Con
+South East,Winchester,41.07,40.93251,15,41,97,Con
+South East,Ashford,59.43,39.58897,21,25,95,UKIP
+South East,Canterbury,51.04,40.00412,20,27,95,UKIP
+South East,Dartford,64.22,37.8461,21,22,94,UKIP
+South East,Dover,62.15,42.14824,25,22,97,UKIP
+South East,Gravesham,65.38,38.72942,24,20,91,UKIP
+South East,Maidstone,58.75,40.13681,21,26,95,UKIP
+South East,Sevenoaks,54.38,41.37833,19,32,97,UKIP
+South East,Shepway,62.25,42.36877,25,22,95,UKIP
+South East,Swale,62.46,39.60567,27,19,97,UKIP
+South East,Thanet,63.85,41.93821,28,20,95,UKIP
+South East,Tonbridge and Malling,55.7,39.79988,20,27,98,UKIP
+South East,Tunbridge Wells,45.11,39.64666,17,35,96,Con
+South East,Cherwell,50.31,38.90646,20,28,94,Con
+South East,Oxford,29.73,34.3159,14,43,84,Lab
+South East,South Oxfordshire,45.02,40.90732,16,37,97,Con
+South East,Vale of White Horse,43.3,40.77874,17,37,96,Con
+South East,West Oxfordshire,46.34,41.10196,18,33,97,Con
+South East,Elmbridge,40.47,39.76144,13,44,93,Con
+South East,Epsom and Ewell,47.92,39.95808,16,36,93,Con
+South East,Guildford,43.83,38.99435,14,40,93,Con
+South East,Mole Valley,46.92,42.69614,16,38,97,Con
+South East,Reigate and Banstead,50.49,39.87151,17,34,95,Con
+South East,Runnymede,54.26,39.65069,18,30,92,Con
+South East,Spelthorne,60.3,40.44336,20,26,94,UKIP
+South East,Surrey Heath,50.98,40.18877,15,34,95,Con
+South East,Tandridge,52.84,41.28989,17,33,97,Con
+South East,Waverley,41.61,41.48431,15,40,97,Con
+South East,Woking,43.85,38.67279,15,38,90,Con
+South East,Adur,54.57,43.01169,26,22,98,UKIP
+South East,Arun,62.48,45.4579,25,23,95,UKIP
+South East,Chichester,50.92,44.53028,20,32,97,Con
+South East,Crawley,58.41,36.83262,20,22,87,UKIP
+South East,Horsham,48.54,42.11881,16,33,97,Con
+South East,Mid Sussex,46.91,40.98905,15,34,97,Con
+South East,Worthing,52.99,42.15222,21,26,96,UKIP
+South West,Bath and North East Somerset,42.15,40.31044,17,33,96,Con
+South West,"Bristol, City of",38.27,36.45731,20,33,91,Lab
+South West,North Somerset,52.17,42.61695,20,28,98,UKIP
+South West,South Gloucestershire,52.68,39.81716,19,27,97,UKIP
+South West,Plymouth,59.94,38.96015,22,21,96,UKIP
+South West,Torbay,63.16,44.17619,26,21,98,UKIP
+South West,Bournemouth,54.88,39.98042,19,26,91,UKIP
+South West,Poole,58.17,42.11806,21,26,96,UKIP
+South West,Swindon,54.66,38.06019,21,23,93,UKIP
+South West,Cornwall,56.52,NA,NA,NA,NA,UKIP
+South West,Isles of Scilly,43.61,NA,NA,NA,NA,UKIP
+South West,Wiltshire,52.49,40.80416,19,29,97,Con
+South West,East Devon,54.11,46.85387,21,29,99,UKIP
+South West,Exeter,44.72,38.12102,18,29,93,Lab
+South West,Mid Devon,53.34,42.32952,23,26,98,Con
+South West,North Devon,57.04,43.33698,24,23,98,UKIP
+South West,South Hams,47.15,45.33772,17,34,99,Con
+South West,Teignbridge,53.9,44.55843,22,28,99,UKIP
+South West,Torridge,60.83,44.59161,25,22,99,UKIP
+South West,West Devon,53.2,44.58015,20,30,99,UKIP
+South West,Christchurch,58.83,47.13979,23,25,98,UKIP
+South West,East Dorset,57.62,46.91669,22,28,99,UKIP
+South West,North Dorset,56.4,42.79874,20,27,98,Con
+South West,Purbeck,59.07,44.86952,22,26,99,UKIP
+South West,West Dorset,51.03,46.18967,20,31,99,Con
+South West,Weymouth and Portland,61.04,42.82866,23,22,98,UKIP
+South West,Cheltenham,43.83,39.50158,17,36,95,Con
+South West,Cotswold,48.9,44.15487,18,34,98,Con
+South West,Forest of Dean,58.58,42.95749,25,24,99,UKIP
+South West,Gloucester,58.5,38.21905,22,22,94,UKIP
+South West,Stroud,45.39,42.29323,18,33,98,Con
+South West,Tewkesbury,53.25,42.36333,19,30,98,Con
+South West,Mendip,48.93,41.90598,21,28,98,Con
+South West,Sedgemoor,61.2,42.40666,25,22,98,UKIP
+South West,South Somerset,57.25,42.92674,22,25,97,UKIP
+South West,Taunton Deane,52.92,41.81132,21,28,97,UKIP
+South West,West Somerset,60.59,47.68761,25,25,98,UKIP
+South West,Gibraltar,4.09,NA,NA,NA,NA,LD
+Wales,Isle of Anglesey,50.94,43.35609,24,26,99,UKIP
+Wales,Gwynedd,41.95,41.62077,23,26,97,UKIP
+Wales,Conwy,53.98,44.55259,26,25,98,UKIP
+Wales,Denbighshire,54,42.39442,25,24,98,UKIP
+Wales,Flintshire,56.37,40.56977,24,22,98,UKIP
+Wales,Wrexham,59.04,39.81771,27,23,96,UKIP
+Wales,Ceredigion,45.37,41.68211,20,28,97,UKIP
+Wales,Pembrokeshire,57.14,42.88223,25,25,99,Con
+Wales,Carmarthenshire,53.75,42.29487,27,24,98,UKIP
+Wales,Swansea,51.51,40.09602,24,26,96,Lab
+Wales,Neath Port Talbot,56.84,41.3451,31,19,99,Lab
+Wales,Bridgend,54.64,40.68024,28,23,98,Lab
+Wales,Vale of Glamorgan,49.27,40.9215,20,30,98,UKIP
+Wales,Cardiff,39.98,36.52111,21,32,92,Lab
+Wales,Rhondda Cynon Taf,53.7,39.78318,32,20,99,Lab
+Wales,Caerphilly,57.63,39.54924,31,19,99,Lab
+Wales,Blaenau Gwent,62.03,40.46065,36,15,99,Lab
+Wales,Torfaen,59.78,40.44772,29,20,99,Lab
+Wales,Monmouthshire,49.56,43.007,21,33,99,Con
+Wales,Newport,55.99,38.7871,27,23,95,Lab
+Wales,Powys,53.74,43.93772,25,26,98,UKIP
+Wales,Merthyr Tydfil,56.44,39.70132,34,18,97,Lab
+West Midlands,"Herefordshire, County of",59.22,42.97913,23,27,96,Con
+West Midlands,Telford and Wrekin,63.22,38.06539,25,21,96,UKIP
+West Midlands,Stoke-on-Trent,69.36,38.45328,34,15,94,UKIP
+West Midlands,Shropshire,56.87,42.56096,23,27,98,UKIP
+West Midlands,Cannock Chase,68.86,39.57322,28,17,99,UKIP
+West Midlands,East Staffordshire,63.21,39.81817,25,23,94,UKIP
+West Midlands,Lichfield,58.81,42.23426,22,28,99,UKIP
+West Midlands,Newcastle-under-Lyme,63.04,40.83402,27,22,97,UKIP
+West Midlands,South Staffordshire,64.85,43.16998,24,25,99,UKIP
+West Midlands,Stafford,55.99,41.81782,20,30,97,UKIP
+West Midlands,Staffordshire Moorlands,64.73,43.39872,27,24,99,UKIP
+West Midlands,Tamworth,67.47,38.55616,27,17,98,UKIP
+West Midlands,North Warwickshire,66.88,41.67654,28,20,99,UKIP
+West Midlands,Nuneaton and Bedworth,66.01,39.70523,28,19,96,UKIP
+West Midlands,Rugby,56.7,39.99012,20,28,93,Con
+West Midlands,Stratford-on-Avon,51.56,43.81755,19,33,97,Con
+West Midlands,Warwick,41.22,39.74561,16,38,94,Con
+West Midlands,Bromsgrove,55.37,42.64558,21,31,99,UKIP
+West Midlands,Malvern Hills,52.16,44.92018,20,34,98,Con
+West Midlands,Redditch,62.29,38.56132,25,21,95,UKIP
+West Midlands,Worcester,53.68,38.31818,21,28,95,UKIP
+West Midlands,Wychavon,57.86,43.50948,22,29,97,Con
+West Midlands,Wyre Forest,63.15,42.69188,28,22,98,UKIP
+West Midlands,Birmingham,50.42,35.28922,28,23,85,Lab
+West Midlands,Coventry,55.6,36.84813,24,23,86,Lab
+West Midlands,Dudley,67.6,40.49379,30,19,97,UKIP
+West Midlands,Sandwell,66.72,37.44231,35,15,88,Lab
+West Midlands,Solihull,56.16,41.26337,23,29,97,UKIP
+West Midlands,Walsall,67.86,38.80546,34,17,93,UKIP
+West Midlands,Wolverhampton,62.57,38.51515,31,20,89,Lab
+Yorkshire and The Humber,"Kingston upon Hull, City of",67.62,37.47216,32,15,94,UKIP
+Yorkshire and The Humber,East Riding of Yorkshire,60.4,43.48781,23,26,98,UKIP
+Yorkshire and The Humber,North East Lincolnshire,69.87,40.19397,30,16,98,UKIP
+Yorkshire and The Humber,North Lincolnshire,66.3,40.7993,26,20,96,UKIP
+Yorkshire and The Humber,York,41.96,39.5221,18,32,95,UKIP
+Yorkshire and The Humber,Craven,52.83,44.49057,20,32,98,Con
+Yorkshire and The Humber,Hambleton,53.66,43.49638,20,32,99,Con
+Yorkshire and The Humber,Harrogate,49.03,42.00736,17,34,97,Con
+Yorkshire and The Humber,Richmondshire,56.78,39.98029,19,27,97,Con
+Yorkshire and The Humber,Ryedale,55.26,44.62955,24,27,98,Con
+Yorkshire and The Humber,Scarborough,61.99,44.2117,26,23,98,UKIP
+Yorkshire and The Humber,Selby,59.17,40.88615,21,26,98,UKIP
+Yorkshire and The Humber,Barnsley,68.31,40.3647,32,17,98,Lab
+Yorkshire and The Humber,Doncaster,68.96,39.80119,30,17,96,UKIP
+Yorkshire and The Humber,Rotherham,67.89,40.19384,30,17,97,UKIP
+Yorkshire and The Humber,Sheffield,50.99,37.87233,24,26,92,Lab
+Yorkshire and The Humber,Bradford,54.23,36.20382,28,22,85,Lab
+Yorkshire and The Humber,Calderdale,55.68,39.61693,24,25,95,UKIP
+Yorkshire and The Humber,Kirklees,54.67,38.41693,25,24,91,Lab
+Yorkshire and The Humber,Leeds,49.69,37.64933,23,27,93,Lab
+Yorkshire and The Humber,Wakefield,66.36,40.22705,31,18,96,UKIP
